@@ -54,19 +54,20 @@ Wordclock::Wordclock(uint16_t pin) :
 // ===== Member Functions ======
 
 void Wordclock::update(const WordClockState& thestate) {
-   for (size_t index = 0; index < 114; index++) {
-       if ( (thestate>>index) & 0x01) {
-           setPixelColor(index, color[0], color[1], color[2], color[3]);
-       }
-   }
+    for (size_t index = 0; index < 114; index++) {
+        if ( (thestate>>index) & 0x01) {
+            setPixelColor(index, color[0], color[1], color[2], color[3]);
+        }
+    }
+    return;
 };
 
 void Wordclock::update() {
     unsigned short hourind;
     if (minute < 25) {
-      hourind = hour%12;
+        hourind = hour%12;
     } else {
-      hourind = (hour+1)%12;
+        hourind = (hour+1)%12;
     }
 
     unsigned short min1ind = minute%5;
@@ -80,6 +81,7 @@ void Wordclock::update() {
     // minstate = pow(2, min1ind)- 1;
     state |= round(pow(2, min1ind))-1;
     update(state);
+    return;
 }
 
 WordClockState Wordclock::getState() {

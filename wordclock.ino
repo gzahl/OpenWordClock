@@ -2,9 +2,11 @@
 #include <avr/sleep.h>
 #include <DS3231.h>
 #include <Wire.h>
+#include "src/Wordclock.h"
 
 // Button and clock pins
 #define CLINT 2
+#define LEDPIN 4
 #define BUP 10
 #define BSET 9
 #define BDOWN 8
@@ -19,6 +21,10 @@ int sleepcounter = 0;
 
 // isr variable for button interrupts
 volatile int button = 0;
+
+// Setup the LEDs
+Wordclock wordclock(LEDPIN);
+WordClockState clockstate;
 
 // state definitions
 typedef enum  {
@@ -72,13 +78,24 @@ void setup() {
     // Begin Serial communication
     Serial.begin(9600);
     Serial.println("Starting");
+
+    // Begin Wordclock LED control
+    wordclock.begin();
+    wordclock.setBrightness(128);
+    delay(100);
+    wordclock.update(wordclock.INITPIC);
+    wordclock.show();
+    sendClockState(wordclock.INITPIC);
+
+    event = EVT_CLOCK;
+    delay(2000);
 }
 
 void loop() {
     // if button event happened, resolve button event, before hopping into
     // state machine. This translates EVT_BTN to a more specific button event.
     if (event == EVT_BTN) {
-        Serial.print("Btn event: ");
+        // Serial.print("Btn event: ");
         sleepcounter = 0;
         event = resolve_btn();
         button = 0;
@@ -88,35 +105,43 @@ void loop() {
     switch (event) {
         case EVT_CLOCK:
             Clock.checkIfAlarm(2);
-            Serial.println( "Clock event.");
-            sleepcounter = 0;
-            event = EVT_NONE;
+            delay(10);
+            wordclock.hour = Clock.getHour(h12, pm);
+            wordclock.minute = Clock.getMinute();
+            wordclock.second = Clock.getSecond();
+
+            wordclock.clear();
+            wordclock.update();
+            wordclock.show();
+
+            sendClockState(wordclock.getState());
+
+            // Serial.println( "Clock event.");
             break;
         case EVT_UP:
-            Serial.println("Up.");
-            event = EVT_NONE;
+            // Serial.println("Up.");
             break;
         case EVT_UP_HOLD:
-            Serial.println("Hold up.");
-            event = EVT_NONE;
+            // Serial.println("Hold up.");
             break;
         case EVT_SET:
-            Serial.println("Set.");
-            event = EVT_NONE;
+            // Serial.println("Set.");
             break;
         case EVT_SET_HOLD:
-            Serial.println("Hold set.");
-            event = EVT_NONE;
+            // Serial.println("Hold set.");
             break;
         case EVT_DOWN:
-            Serial.println("Down.");
-            event = EVT_NONE;
+            // Serial.println("Down.");
             break;
         case EVT_DOWN_HOLD:
-            Serial.println("Hold down.");
-            event = EVT_NONE;
+            // Serial.println("Hold down.");
         default:
             sleepcounter++;
+    }
+
+    if (event != EVT_NONE) {
+        event = EVT_NONE;
+        sleepcounter = 0;
     }
 
     // if nothing happened for the last 200 cycles, fall asleep.
@@ -124,6 +149,16 @@ void loop() {
         GoToSleep();
     }
     delay(10);
+}
+
+void sendClockState(const WordClockState state) {
+    for (size_t index = 0; index < 8; index++) {
+        Serial.print(state.getWord(index), HEX);
+        Serial.print(" ");
+    }
+    Serial.println();
+    delay(100);
+    return;
 }
 
 void isr_alarm() {
