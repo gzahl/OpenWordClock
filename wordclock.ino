@@ -22,6 +22,12 @@ int sleepcounter = 0;
 // isr variable for button interrupts
 volatile int button = 0;
 
+// color index
+int cindex = 51;
+int lastcindex = 0;
+
+// int ccode(const int& index, int* colors);
+
 // Setup the LEDs
 Wordclock wordclock(LEDPIN);
 WordClockState clockstate;
@@ -47,6 +53,7 @@ typedef enum  {
 
 // current event
 EVENTS event = EVT_NONE;
+volatile EVENTS event_buffer = EVT_NONE;
 
 void setup() {
     // setup cpu status led
@@ -83,21 +90,25 @@ void setup() {
     wordclock.begin();
     wordclock.setBrightness(128);
     delay(100);
+
+    // ccode(cindex, *wordclock.color);
     wordclock.update(wordclock.INITPIC);
     wordclock.show();
-    sendClockState(wordclock.INITPIC);
+    sendClockState(cindex, wordclock.INITPIC);
 
-    event = EVT_CLOCK;
+    event_buffer = EVT_CLOCK;
     delay(2000);
 }
 
 void loop() {
+    event = event_buffer;
+    event_buffer = EVT_NONE;
     // if button event happened, resolve button event, before hopping into
     // state machine. This translates EVT_BTN to a more specific button event.
     if (event == EVT_BTN) {
         // Serial.print("Btn event: ");
         sleepcounter = 0;
-        event = resolve_btn();
+        resolve_btn(event);
         button = 0;
     }
 
@@ -114,27 +125,79 @@ void loop() {
             wordclock.update();
             wordclock.show();
 
-            sendClockState(wordclock.getState());
+            sendClockState(cindex, wordclock.getState());
 
             // Serial.println( "Clock event.");
             break;
         case EVT_UP:
-            // Serial.println("Up.");
+            cindex += 1;
+            cindex %= 102;
+            // ccode(cindex, *wordclock.color);
+            wordclock.clear();
+            wordclock.update();
+            wordclock.show();
+            sendClockState(cindex, wordclock.getState());
             break;
         case EVT_UP_HOLD:
-            // Serial.println("Hold up.");
-            break;
+            if (cindex == -1) {
+                break;
+            } else {
+                while (!digitalRead(BUP)) {
+                    cindex += 1;
+                    cindex %= 102;
+                    wordclock.clear();
+                    wordclock.update();
+                    wordclock.show();
+                    sendClockState(cindex, wordclock.getState());
+                    delay(50);
+                }
+                break;
+            }
         case EVT_SET:
-            // Serial.println("Set.");
+            if (cindex == -1) {
+                cindex = lastcindex;
+            } else {
+                lastcindex = cindex;
+                cindex = -1;
+            }
+            // ccode(cindex, *wordclock.color);
+            wordclock.clear();
+            wordclock.update();
+            wordclock.show();
+            sendClockState(cindex, wordclock.getState());
             break;
         case EVT_SET_HOLD:
             // Serial.println("Hold set.");
             break;
         case EVT_DOWN:
-            // Serial.println("Down.");
+            cindex -= 1;
+            if (cindex < 0) {
+                cindex = 102 - cindex;
+            }
+            // ccode(cindex, *wordclock.color);
+            wordclock.clear();
+            wordclock.update();
+            wordclock.show();
+            sendClockState(cindex, wordclock.getState());
             break;
         case EVT_DOWN_HOLD:
-            // Serial.println("Hold down.");
+            if (cindex == -1) {
+                break;
+            } else {
+                while (!digitalRead(BDOWN)) {
+                    cindex -= 1;
+                    if (cindex < 0) {
+                        cindex = 101 - cindex;
+                    }
+                    wordclock.clear();
+                    wordclock.update();
+                    wordclock.show();
+                    sendClockState(cindex, wordclock.getState());
+                    delay(50);
+                }
+                break;
+            }
+
         default:
             sleepcounter++;
     }
@@ -145,13 +208,15 @@ void loop() {
     }
 
     // if nothing happened for the last 200 cycles, fall asleep.
-    if (sleepcounter > 00) {
+    if (sleepcounter > 500) {
         GoToSleep();
     }
     delay(10);
 }
 
-void sendClockState(const WordClockState state) {
+void sendClockState(const int& cindex, const WordClockState& state) {
+    Serial.print(cindex);
+    Serial.print(" ");
     for (size_t index = 0; index < 8; index++) {
         Serial.print(state.getWord(index), HEX);
         Serial.print(" ");
@@ -163,7 +228,7 @@ void sendClockState(const WordClockState state) {
 
 void isr_alarm() {
     // clock interrupt service routine
-    event = EVT_CLOCK;
+    event_buffer = EVT_CLOCK;
     return;
 }
 
@@ -172,11 +237,11 @@ void GoToSleep() {
     sleep_enable();
     set_sleep_mode(SLEEP_MODE_PWR_DOWN);
     digitalWrite(LED_BUILTIN, LOW);
-    delay(10);
+    delay(100);
     sleep_cpu();
     digitalWrite(LED_BUILTIN, HIGH);
     sleep_disable();
-    delay(10);
+    delay(100);
     return;
 }
 
@@ -186,7 +251,7 @@ void isr_btn(const int& btn) {
     if (button) {
         return;
     } else {
-        event = EVT_BTN;
+        event_buffer = EVT_BTN;
         button = btn;
         return;
     }
@@ -206,43 +271,70 @@ void isr_bdown() {
 }
 
 
-EVENTS resolve_btn() {
+void resolve_btn(EVENTS& evtout) {
     // button resolver.
     // translates button event into specific button click or hold action.
     int count = 0;
-    EVENTS evtout = EVT_NONE;
-    while (count < 4 or evtout == EVT_NONE) {
-        if (count > 100) {
-            switch (button) {
-                case BUP:
-                    evtout = EVT_UP_HOLD;
-                    break;
-                case BSET:
-                    evtout = EVT_SET_HOLD;
-                    break;
-                case BDOWN:
-                    evtout = EVT_DOWN_HOLD;
-                    break;
-            }
-            break;
-        }
-
-        if (digitalRead(button)) {
-            switch (button) {
-                case BUP:
-                    evtout = EVT_UP;
-                    break;
-                case BSET:
-                    evtout = EVT_SET;
-                    break;
-                case BDOWN:
-                    evtout = EVT_DOWN;
-                    break;
-            }
-            break;
-        }
+    while (!digitalRead(button)) {
         count++;
+        if (count > 100) {
+            break;
+        }
         delay(10);
     }
-    return evtout;
+    if (count < 4) {
+        evtout = EVT_NONE;
+    } else if (count < 100) {
+        switch (button) {
+            case BUP:
+                evtout = EVT_UP;
+                break;
+            case BSET:
+                evtout = EVT_SET;
+                break;
+            case BDOWN:
+                evtout = EVT_DOWN;
+                break;
+        }
+    } else if (count > 100) {
+        switch (button) {
+            case BUP:
+                evtout = EVT_UP_HOLD;
+                break;
+            case BSET:
+                evtout = EVT_SET_HOLD;
+                break;
+            case BDOWN:
+                evtout = EVT_DOWN_HOLD;
+                break;
+        }
+    }
+    return;
+}
+
+int cvalue(const int& index) {
+    if (index < 17) {
+        return index;
+    } else if (index < 51) {
+        return 255;
+    } else if (index < 68) {
+        return 68 - index;
+    } else {
+        return 0;
+    }
+}
+
+int ccode(const int& index, int* colors) {
+    if (index == -1) {
+        colors[0] = 0;
+        colors[1] = 0;
+        colors[2] = 0;
+        colors[3] = 255;
+    } else {
+        colors[0] = cvalue(index);
+        colors[1] = cvalue(index+34);
+        colors[2] = cvalue(index+68);
+        colors[3] = 0;
+    }
+    return 0;
 }
