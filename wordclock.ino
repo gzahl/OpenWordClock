@@ -167,7 +167,10 @@ void loop() {
             sendClockState(cindex, wordclock.getState());
             break;
         case EVT_SET_HOLD:
-            // Serial.println("Hold set.");
+            setroutine();
+            wordclock.clear();
+            wordclock.update();
+            wordclock.show();
             break;
         case EVT_DOWN:
             cindex -= 1;
@@ -337,4 +340,118 @@ int ccode(const int& index, int* colors) {
         colors[3] = 0;
     }
     return 0;
+}
+
+void setroutine() {
+
+
+    int elapsed = 0;
+    int lastupdate = 0;
+    int lastevent = millis()/1000;
+
+    byte hour = wordclock.hour;
+    byte minute = wordclock.minute;
+    byte second = wordclock.second;
+
+    enum setting {shour, smin5, smin1, ssecond };
+    setting set = smin5;
+    WordClockState state;
+    EVENTS event = EVT_NONE;
+
+    while (elapsed < 60) {
+        event = event_buffer;
+        event_buffer = EVT_NONE;
+
+        if (event == EVT_BTN) {
+            resolve_btn(event);
+        }
+
+        switch (event) {
+            case EVT_UP:
+                switch (set) {
+                    case shour:
+                        ++hour;
+                        hour %= 12;
+                        break;
+                    case smin5:
+                        minute += 5;
+                        minute %= 60;
+                        break;
+                    case smin1:
+                        ++minute;
+                        minute %= 60;
+                        break;
+                }
+                break;
+            case EVT_DOWN:
+                switch (set) {
+                    case shour:
+                        hour += 11;
+                        hour %= 12;
+                        break;
+                    case smin5:
+                        minute += 55;
+                        minute %= 60;
+                        break;
+                    case smin1:
+                        minute += 59;
+                        minute %= 60;
+                        break;
+                }
+                break;
+            case EVT_SET:
+                switch (set) {
+                    case shour:
+                        set = smin1;
+                        break;
+                    case smin5:
+                        set = shour;
+                        break;
+                    case smin1:
+                        set = ssecond;
+                        break;
+                }
+                break;
+            default:
+                event = EVT_NONE;
+        }
+
+
+        if (elapsed != lastupdate) {
+            if (elapsed % 2) {
+                Wordclock::getState(state, hour, minute, second);
+            } else {
+                Wordclock::getState(state, hour, minute, second);
+                switch (set) {
+                    case shour:
+                        state &= (~Wordclock::MSKHOUR);
+                        break;
+                    case smin5:
+                        state &= (~Wordclock::MSKMIN5);
+                        break;
+                }
+
+            }
+
+            wordclock.clear();
+            wordclock.update(state);
+            wordclock.show();
+            sendClockState(cindex, wordclock.getState());
+            lastupdate = elapsed;
+        }
+
+        if (event != EVT_NONE) {
+            lastevent = elapsed;
+            elapsed = 0;
+            Serial.println("SOME EVT.");
+        } else if (set == second) {
+            Clock.setHour(hour);
+            Clock.setMinute(minute);
+            Serial.println("EXIT.");
+        } else {
+            elapsed = millis()/1000 - lastevent;
+            delay(10);
+        }
+    }
+    return;
 }
