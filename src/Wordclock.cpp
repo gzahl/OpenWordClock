@@ -40,6 +40,9 @@ const WordClockState Wordclock::UHR({0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x6
 
 const WordClockState Wordclock::INITPIC({0x078f, 0x0221, 0x1805, 0xfc60, 0x0611, 0x1029, 0x7821, 0x0000});
 
+const WordClockState Wordclock::MSKMIN5({0x0160, 0x1e68, 0xe780, 0x7000, 0x000e, 0x00ff, 0x07e0, 0x0000});
+const WordClockState Wordclock::MSKHOUR({0xca00, 0xe007, 0x007f, 0x0dfe, 0xf9b0, 0x1f00, 0xe00f, 0x0000});
+
 // ===== Constructors ======
 Wordclock::Wordclock(uint16_t pin) :
     Adafruit_NeoPixel(LED_COUNT, pin, NEO_RGBW + NEO_KHZ800),
@@ -54,6 +57,7 @@ Wordclock::Wordclock(uint16_t pin) :
 // ===== Member Functions ======
 
 void Wordclock::update(const WordClockState& thestate) {
+    state = thestate;
     for (size_t index = 0; index < 114; index++) {
         if ( (thestate>>index) & 0x01) {
             setPixelColor(index, color[0], color[1], color[2], color[3]);
@@ -88,8 +92,28 @@ WordClockState Wordclock::getState() {
   return state;
 }
 
-// int main() {
-//     Wordclock clock(10);
-//     clock.update();
-//     return 0;
-// };
+static void Wordclock::getState(
+    WordClockState& clockstate,
+    const byte& hour,
+    const byte& minute,
+    const byte& second
+) {
+    unsigned short hourind;
+    if (minute < 25) {
+        hourind = hour%12;
+    } else {
+        hourind = (hour+1)%12;
+    }
+
+    unsigned short min1ind = minute%5;
+    unsigned short min5ind = (minute-min1ind)/5;
+
+    clockstate = Wordclock::ESIST | Wordclock::MIN5[min5ind] | Wordclock::HOURS[hourind];
+    if (min5ind == 0) {
+        clockstate |= Wordclock::UHR;
+    }
+    // unsigned short minstate;
+    // minstate = pow(2, min1ind)- 1;
+    clockstate |= round(pow(2, min1ind))-1;
+    return clockstate;
+}
