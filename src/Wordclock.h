@@ -18,6 +18,7 @@ public:
     static const WordClockState MIN5[12];
     static const WordClockState HOURS[12];
     static const WordClockState UHR;
+    static const WordClockState SEC[20];
 
     static const WordClockState MSKMIN5;
     static const WordClockState MSKHOUR;
