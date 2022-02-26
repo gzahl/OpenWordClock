@@ -26,7 +26,6 @@ volatile int button = 0;
 int cindex = 51;
 int lastcindex = 0;
 
-// int ccode(const int& index, int* colors);
 
 // Setup the LEDs
 Wordclock wordclock(LEDPIN);
@@ -91,7 +90,7 @@ void setup() {
     wordclock.setBrightness(128);
     delay(100);
 
-    // ccode(cindex, *wordclock.color);
+    ccode(cindex, wordclock.color);
     wordclock.update(wordclock.INITPIC);
     wordclock.show();
     sendClockState(cindex, wordclock.INITPIC);
@@ -103,13 +102,13 @@ void setup() {
 void loop() {
     event = event_buffer;
     event_buffer = EVT_NONE;
+
     // if button event happened, resolve button event, before hopping into
     // state machine. This translates EVT_BTN to a more specific button event.
     if (event == EVT_BTN) {
         // Serial.print("Btn event: ");
         sleepcounter = 0;
         resolve_btn(event);
-        button = 0;
     }
 
     // Not a state machine yet.
@@ -132,11 +131,8 @@ void loop() {
         case EVT_UP:
             cindex += 1;
             cindex %= 102;
-            // ccode(cindex, *wordclock.color);
-            wordclock.clear();
-            wordclock.update();
-            wordclock.show();
-            sendClockState(cindex, wordclock.getState());
+            ccode(cindex, wordclock.color);
+            event_buffer = EVT_CLOCK;
             break;
         case EVT_UP_HOLD:
             if (cindex == -1) {
@@ -160,28 +156,21 @@ void loop() {
                 lastcindex = cindex;
                 cindex = -1;
             }
-            // ccode(cindex, *wordclock.color);
-            wordclock.clear();
-            wordclock.update();
-            wordclock.show();
-            sendClockState(cindex, wordclock.getState());
+            ccode(cindex, wordclock.color);
+            event_buffer = EVT_CLOCK;
             break;
         case EVT_SET_HOLD:
             setroutine();
-            wordclock.clear();
-            wordclock.update();
-            wordclock.show();
+            Serial.println("Left timeset routine.");
+            event_buffer = EVT_CLOCK;
             break;
         case EVT_DOWN:
             cindex -= 1;
             if (cindex < 0) {
                 cindex = 102 - cindex;
             }
-            // ccode(cindex, *wordclock.color);
-            wordclock.clear();
-            wordclock.update();
-            wordclock.show();
-            sendClockState(cindex, wordclock.getState());
+            ccode(cindex, wordclock.color);
+            event_buffer = EVT_CLOCK;
             break;
         case EVT_DOWN_HOLD:
             if (cindex == -1) {
@@ -312,6 +301,7 @@ void resolve_btn(EVENTS& evtout) {
                 break;
         }
     }
+    button = 0;
     return;
 }
 
@@ -327,7 +317,7 @@ int cvalue(const int& index) {
     }
 }
 
-int ccode(const int& index, int* colors) {
+int ccode(const int& index, byte* colors) {
     if (index == -1) {
         colors[0] = 0;
         colors[1] = 0;
@@ -344,7 +334,6 @@ int ccode(const int& index, int* colors) {
 
 void setroutine() {
 
-
     int elapsed = 0;
     int lastupdate = 0;
     int lastevent = millis()/1000;
@@ -353,20 +342,20 @@ void setroutine() {
     byte minute = wordclock.minute;
     byte second = wordclock.second;
 
-    enum setting {shour, smin5, smin1, ssecond };
-    setting set = smin5;
+    enum setting {shour, smin5, smin1, ssec, done};
+    int set = smin5;
     WordClockState state;
-    EVENTS event = EVT_NONE;
+    EVENTS intevent = EVT_NONE;
 
     while (elapsed < 60) {
-        event = event_buffer;
+        intevent = event_buffer;
         event_buffer = EVT_NONE;
 
-        if (event == EVT_BTN) {
-            resolve_btn(event);
+        if (intevent == EVT_BTN) {
+            resolve_btn(intevent);
         }
 
-        switch (event) {
+        switch (intevent) {
             case EVT_UP:
                 switch (set) {
                     case shour:
@@ -380,6 +369,10 @@ void setroutine() {
                     case smin1:
                         ++minute;
                         minute %= 60;
+                        break;
+                    case ssec:
+                        second = 0;
+                        Clock.setSecond(second);
                         break;
                 }
                 break;
@@ -397,29 +390,48 @@ void setroutine() {
                         minute += 59;
                         minute %= 60;
                         break;
+                    case ssec:
+                        second = 0;
+                        Clock.setSecond(second);
+                        break;
                 }
                 break;
             case EVT_SET:
                 switch (set) {
                     case shour:
                         set = smin1;
+                        Clock.setHour(hour);
                         break;
                     case smin5:
                         set = shour;
                         break;
                     case smin1:
-                        set = ssecond;
+                        set = ssec;
+                        Clock.setMinute(minute);
+                        break;
+                    case ssec:
+                        set = done;
                         break;
                 }
                 break;
             default:
-                event = EVT_NONE;
+                intevent = EVT_NONE;
         }
 
 
         if (elapsed != lastupdate) {
             if (elapsed % 2) {
-                Wordclock::getState(state, hour, minute, second);
+                switch (set) {
+                    case smin5:
+                    case shour:
+                    case smin1:
+                        Wordclock::getState(state, hour, minute, second);
+                        break;
+                    case ssec:
+                        second = Clock.getSecond();
+                        state = Wordclock::SEC[second % 10] | Wordclock::SEC[second / 10 + 10];
+                        break;
+                }
             } else {
                 Wordclock::getState(state, hour, minute, second);
                 switch (set) {
@@ -429,6 +441,13 @@ void setroutine() {
                     case smin5:
                         state &= (~Wordclock::MSKMIN5);
                         break;
+                    case smin1:
+                        state &= (~round(pow(2, 3))-1);
+                        break;
+                    case ssec:
+                        second = Clock.getSecond();
+                        state = Wordclock::SEC[second % 10] | Wordclock::SEC[second / 10 + 10];
+                        break;
                 }
 
             }
@@ -436,21 +455,21 @@ void setroutine() {
             wordclock.clear();
             wordclock.update(state);
             wordclock.show();
-            sendClockState(cindex, wordclock.getState());
+            sendClockState(cindex, state);
             lastupdate = elapsed;
         }
 
-        if (event != EVT_NONE) {
-            lastevent = elapsed;
+        if (intevent != EVT_NONE) {
+            lastevent = millis()/1000;
             elapsed = 0;
             Serial.println("SOME EVT.");
-        } else if (set == second) {
-            Clock.setHour(hour);
-            Clock.setMinute(minute);
+        }
+        if (set == done) {
             Serial.println("EXIT.");
+            return;
         } else {
             elapsed = millis()/1000 - lastevent;
-            delay(10);
+            delay(100);
         }
     }
     return;
