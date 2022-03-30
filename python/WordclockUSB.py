@@ -47,7 +47,7 @@ def cvalue(index):
 
 
 def ccode(index):
-    if index == -1:
+    if index > 102:
         return (255, 255, 255)
     else:
         return (cvalue(index), cvalue(index + 34), cvalue(index + 68))

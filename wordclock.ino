@@ -23,8 +23,8 @@ int sleepcounter = 0;
 volatile int button = 0;
 
 // color index
-int cindex = 51;
-int lastcindex = 0;
+byte cindex = 51;
+byte lastcindex = 0;
 
 
 // Setup the LEDs
@@ -87,10 +87,12 @@ void setup() {
 
     // Begin Wordclock LED control
     wordclock.begin();
-    wordclock.setBrightness(128);
+    wordclock.setBrightness(255);
     delay(100);
 
     ccode(cindex, wordclock.color);
+
+    wordclock.clear();
     wordclock.update(wordclock.INITPIC);
     wordclock.show();
     sendClockState(cindex, wordclock.INITPIC);
@@ -129,18 +131,24 @@ void loop() {
             // Serial.println( "Clock event.");
             break;
         case EVT_UP:
-            cindex += 1;
+            cindex++;
             cindex %= 102;
             ccode(cindex, wordclock.color);
+            Serial.print(wordclock.color[0]);
+            Serial.print(" ");
+            Serial.print(wordclock.color[1]);
+            Serial.print(" ");
+            Serial.println(wordclock.color[2]);
             event_buffer = EVT_CLOCK;
             break;
         case EVT_UP_HOLD:
-            if (cindex == -1) {
+            if (cindex > 101) {
                 break;
             } else {
                 while (!digitalRead(BUP)) {
-                    cindex += 1;
+                    cindex++;
                     cindex %= 102;
+                    ccode(cindex, wordclock.color);
                     wordclock.clear();
                     wordclock.update();
                     wordclock.show();
@@ -150,11 +158,11 @@ void loop() {
                 break;
             }
         case EVT_SET:
-            if (cindex == -1) {
+            if (cindex > 101) {
                 cindex = lastcindex;
             } else {
                 lastcindex = cindex;
-                cindex = -1;
+                cindex = 255;
             }
             ccode(cindex, wordclock.color);
             event_buffer = EVT_CLOCK;
@@ -165,22 +173,25 @@ void loop() {
             event_buffer = EVT_CLOCK;
             break;
         case EVT_DOWN:
-            cindex -= 1;
-            if (cindex < 0) {
-                cindex = 102 - cindex;
+            cindex--;
+            if (cindex == 255) {
+                cindex = 101;
             }
+            cindex %= 102;
             ccode(cindex, wordclock.color);
             event_buffer = EVT_CLOCK;
             break;
         case EVT_DOWN_HOLD:
-            if (cindex == -1) {
+            if (cindex > 101) {
                 break;
             } else {
                 while (!digitalRead(BDOWN)) {
-                    cindex -= 1;
-                    if (cindex < 0) {
-                        cindex = 101 - cindex;
+                    cindex--;
+                    if (cindex == 255) {
+                        cindex = 101;
                     }
+                    cindex %= 102;
+                    ccode(cindex, wordclock.color);
                     wordclock.clear();
                     wordclock.update();
                     wordclock.show();
@@ -305,7 +316,7 @@ void resolve_btn(EVENTS& evtout) {
     return;
 }
 
-int cvalue(const int& index) {
+byte cvalue(const byte index) {
     if (index < 17) {
         return index;
     } else if (index < 51) {
@@ -317,16 +328,16 @@ int cvalue(const int& index) {
     }
 }
 
-int ccode(const int& index, byte* colors) {
-    if (index == -1) {
+int ccode(const byte index, byte* colors) {
+    if (index > 102) {
         colors[0] = 0;
         colors[1] = 0;
         colors[2] = 0;
         colors[3] = 255;
     } else {
-        colors[0] = cvalue(index);
-        colors[1] = cvalue(index+34);
-        colors[2] = cvalue(index+68);
+        colors[0] = cvalue(index)*15;
+        colors[1] = cvalue((index+34)%102)*15;
+        colors[2] = cvalue((index+68)%102)*15;
         colors[3] = 0;
     }
     return 0;
@@ -442,7 +453,7 @@ void setroutine() {
                         state &= (~Wordclock::MSKMIN5);
                         break;
                     case smin1:
-                        state &= (~round(pow(2, 3))-1);
+                        state &= ~0x000f;
                         break;
                     case ssec:
                         second = Clock.getSecond();

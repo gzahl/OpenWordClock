@@ -12,7 +12,7 @@ class Wordclock : public Adafruit_NeoPixel
 private:
 
 public:
-    WordClockState state;
+
 
     static const WordClockState ESIST;
     static const WordClockState MIN5[12];
@@ -23,8 +23,9 @@ public:
     static const WordClockState MSKMIN5;
     static const WordClockState MSKHOUR;
 
-    // This should become private later on
     static const WordClockState INITPIC;
+
+    WordClockState state;
     byte hour;
     byte minute;
     byte second;

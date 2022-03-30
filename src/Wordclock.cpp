@@ -68,7 +68,7 @@ const WordClockState Wordclock::MSKHOUR({0xca00, 0xe007, 0x007f, 0x0dfe, 0xf9b0,
 
 // ===== Constructors ======
 Wordclock::Wordclock(uint16_t pin) :
-    Adafruit_NeoPixel(LED_COUNT, pin, NEO_RGBW + NEO_KHZ800),
+    Adafruit_NeoPixel(LED_COUNT, pin, NEO_GRBW + NEO_KHZ800),
     hour(0),
     minute(0),
     second(0),
@@ -81,9 +81,15 @@ Wordclock::Wordclock(uint16_t pin) :
 
 void Wordclock::update(const WordClockState& thestate) {
     state = thestate;
+    uint32_t cvalue;
+    if (color[3]) {
+        cvalue = Color(0, 0, 0, color[3]);
+    } else {
+        cvalue = Color(color[0], color[1], color[2]);
+    }
     for (size_t index = 0; index < 114; index++) {
         if ( (thestate>>index) & 0x01) {
-            setPixelColor(index, color[0], color[1], color[2], color[3]);
+            setPixelColor(index, cvalue);
         }
     }
     return;
