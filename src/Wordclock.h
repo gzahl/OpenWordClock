@@ -25,6 +25,10 @@ public:
 
     static const WordClockState INITPIC;
 
+    static const WordClockState BRIGHTNESS;
+    static const WordClockState TOFF;
+    static const WordClockState SET;
+
     WordClockState state;
     byte hour;
     byte minute;
