@@ -484,7 +484,7 @@ void prog_brightness(state_t& state, event_t& event) {
             brightness--;
             break;
         case EVT_DOWN_HOLD:
-            while (!digitalRead(DOWN)) {
+            while (!digitalRead(BDOWN)) {
                 wordclock.clear();
                 wordclock.setBrightness(--brightness);
                 wordclock.update();
