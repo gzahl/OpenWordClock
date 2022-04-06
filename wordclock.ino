@@ -33,7 +33,8 @@ enum state_t {
     ST_CLOCK,
     ST_MENU,
     ST_SET,
-    ST_TOFF
+    ST_TOFF,
+    ST_BRIGHTNESS
 };
 
 // event definitions
@@ -133,15 +134,16 @@ void loop() {
         case ST_CLOCK:
             prog_clock(state, event);
             break;
-        // case ST_MENU:
-        //     prog_menu(state, event);
-        //     break;
+        case ST_MENU:
+            prog_menu(state, event);
+            break;
         case ST_SET:
             prog_set(state, event);
             break;
-        // case ST_TOFF:
-        //     prog_toff(state, event);
-        //     break;
+        case ST_TOFF:
+        case ST_BRIGHTNESS:
+            prog_toff(state, event);
+            break;
     }
 
     if (event != EVT_NONE) {
@@ -222,7 +224,8 @@ void prog_clock(state_t& state, event_t& event) {
             break;
 
         case EVT_SET_HOLD:
-            state = ST_SET;
+            state = ST_MENU;
+            event_buffer = EVT_SET_HOLD;
             break;
 
         case EVT_DOWN:
@@ -258,10 +261,55 @@ void prog_clock(state_t& state, event_t& event) {
     return;
 }
 
-// void prog_menu(state_t& state, event_t& event) {
-//     Serial.print("Prog: menu");
-//     return;
-// }
+void prog_menu(state_t& state, event_t& event) {
+    enum menuitem_t {set, toff, brightness, count};
+    static int menuitem = set;
+    switch (event) {
+        case EVT_UP:
+            menuitem++;
+            menuitem %= count;
+            break;
+        case EVT_SET:
+            switch (menuitem) {
+                case set:
+                    state = ST_SET;
+                    break;
+                case toff:
+                    state = ST_TOFF;
+                    break;
+                case brightness:
+                    state = ST_BRIGHTNESS;
+                    break;
+            }
+            break;
+        case EVT_DOWN:
+            menuitem += (count - 1);
+            menuitem %= count;
+            break;
+        case EVT_TIMEOUT:
+            state = ST_CLOCK;
+            break;
+    }
+    if (event != EVT_NONE) {
+        wordclock.clear();
+        switch (menuitem) {
+            case set:
+                wordclock.update(Wordclock::SET);
+                sendClockState(cindex, Wordclock::SET);
+                break;
+            case toff:
+                wordclock.update(Wordclock::TOFF);
+                sendClockState(cindex, Wordclock::TOFF);
+                break;
+            case brightness:
+                wordclock.update(Wordclock::BRIGHTNESS);
+                sendClockState(cindex, Wordclock::BRIGHTNESS);
+                break;
+        }
+        wordclock.show();
+    }
+    return;
+}
 
 void prog_set(state_t& state, event_t& event) {
 
@@ -404,10 +452,12 @@ void prog_set(state_t& state, event_t& event) {
     return;
 }
 
-// void prog_toff(state_t& state, event_t& event) {
-//     Serial.print("Prog: toff");
-//     return;
-// }
+void prog_toff(state_t& state, event_t& event) {
+    Serial.println("Prog: toff");
+    state = ST_CLOCK;
+    event_buffer = EVT_CLOCK;
+    return;
+}
 
 
 // ============================================================================
