@@ -4,12 +4,17 @@
 #include <Wire.h>
 #include "src/Wordclock.h"
 
+// Version Number
+#define VERSION "v0.1.0"
+
 // Button and clock pins
 #define CLINT 2
 #define LEDPIN 4
 #define BUP 10
 #define BSET 9
 #define BDOWN 8
+
+// Timeout setting
 #define TIMEOUT 60
 
 // Setup Clock
@@ -94,7 +99,9 @@ void setup() {
 
     // Begin Serial communication
     Serial.begin(9600);
-    Serial.println("Starting");
+    Serial.println("OpenWordClock");
+    Serial.print("Firmware Version ");
+    Serial.println(VERSION);
 
     // Begin Wordclock LED control
     wordclock.begin();
