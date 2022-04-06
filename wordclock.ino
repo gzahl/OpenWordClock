@@ -21,6 +21,9 @@ bool pm = false;
 byte cindex = 51;
 byte lastcindex = 0;
 
+// brightness
+byte brightness = 128;
+
 // isr variable for button interrupts
 volatile int button = 0;
 
@@ -95,7 +98,7 @@ void setup() {
 
     // Begin Wordclock LED control
     wordclock.begin();
-    wordclock.setBrightness(255);
+    wordclock.setBrightness(brightness);
     delay(100);
 
     ccode(cindex, wordclock.color);
@@ -140,8 +143,10 @@ void loop() {
         case ST_SET:
             prog_set(state, event);
             break;
-        case ST_TOFF:
         case ST_BRIGHTNESS:
+            prog_brightness(state, event);
+            break;
+        case ST_TOFF:
             prog_toff(state, event);
             break;
     }
@@ -459,6 +464,52 @@ void prog_toff(state_t& state, event_t& event) {
     return;
 }
 
+void prog_brightness(state_t& state, event_t& event) {
+    switch (event) {
+        case EVT_UP:
+            brightness++;
+            break;
+        case EVT_UP_HOLD:
+            while (!digitalRead(BUP)) {
+                wordclock.clear();
+                wordclock.setBrightness(++brightness);
+                wordclock.update();
+                wordclock.show();
+                Serial.print("Brightness: ");
+                Serial.println(brightness);
+                delay(10);
+            }
+            break;
+        case EVT_DOWN:
+            brightness--;
+            break;
+        case EVT_DOWN_HOLD:
+            while (!digitalRead(DOWN)) {
+                wordclock.clear();
+                wordclock.setBrightness(--brightness);
+                wordclock.update();
+                wordclock.show();
+                Serial.print("Brightness: ");
+                Serial.println(brightness);
+                delay(10);
+            }
+            break;
+        case EVT_SET:
+        case EVT_TIMEOUT:
+            state = ST_CLOCK;
+            event_buffer = EVT_CLOCK;
+            break;
+    }
+    if (event != EVT_NONE) {
+        wordclock.clear();
+        wordclock.setBrightness(brightness);
+        wordclock.update();
+        wordclock.show();
+        Serial.print("Brightness: ");
+        Serial.println(brightness);
+    }
+    return;
+}
 
 // ============================================================================
 // ===== interrupt service routines ===========================================
