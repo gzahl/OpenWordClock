@@ -325,12 +325,13 @@ void prog_menu(state_t& state, event_t& event) {
 
 void prog_set(state_t& state, event_t& event) {
 
-    enum setting_t {init, shour, smin5, smin1, ssec};
-    static setting_t setting = init;
+    enum setting_t {sinit, shour, smin5, smin1, ssec, sampm};
+    static setting_t setting = sinit;
 
     static byte hour;
     static byte minute;
     static byte second;
+    static bool pm = false;
 
     static int lastevent;
     static int lastupdate;
@@ -338,7 +339,7 @@ void prog_set(state_t& state, event_t& event) {
 
     static WordClockState WCstate;
 
-    if (setting == init) {
+    if (setting == sinit) {
         hour = wordclock.hour;
         minute = wordclock.minute;
         second = wordclock.second;
@@ -367,23 +368,33 @@ void prog_set(state_t& state, event_t& event) {
                     second = 0;
                     Clock.setSecond(second);
                     break;
+                case sampm:
+                    pm = !pm;
+                    break;
             }
             break;
         case EVT_SET:
             switch (setting) {
                 case shour:
                     setting = smin1;
-                    Clock.setHour(hour);
                     break;
                 case smin5:
                     setting = shour;
                     break;
                 case smin1:
-                    setting = ssec;
+                    setting = sampm;
                     Clock.setMinute(minute);
                     break;
+                case sampm:
+                    setting = ssec;
+                    if (pm) {
+                        hour += 12;
+                        hour %= 24;
+                    }
+                    Clock.setHour(hour);
+                    break;
                 case ssec:
-                    setting = init;
+                    setting = sinit;
                     state = ST_CLOCK;
                     event_buffer = EVT_CLOCK;
                     break;
@@ -407,10 +418,13 @@ void prog_set(state_t& state, event_t& event) {
                     second = 0;
                     Clock.setSecond(second);
                     break;
+                case sampm:
+                    pm = !pm;
+                    break;
             }
             break;
         case EVT_TIMEOUT:
-            setting = init;
+            setting = sinit;
             state = ST_CLOCK;
             break;
     }
@@ -428,6 +442,13 @@ void prog_set(state_t& state, event_t& event) {
                     second = Clock.getSecond();
                     WCstate = Wordclock::SEC[second % 10] | Wordclock::SEC[second / 10 + 10];
                     break;
+                case sampm:
+                    if (pm) {
+                        WCstate = Wordclock::PM;
+                    } else {
+                        WCstate = Wordclock::AM;
+                    }
+                break;
             }
         } else {
             Wordclock::getState(WCstate, hour, minute, second);
@@ -444,6 +465,9 @@ void prog_set(state_t& state, event_t& event) {
                 case ssec:
                     second = Clock.getSecond();
                     WCstate = Wordclock::SEC[second % 10] | Wordclock::SEC[second / 10 + 10];
+                    break;
+                case sampm:
+                    WCstate = WordClockState({0, 0, 0, 0, 0, 0, 0, 0});
                     break;
             }
 
