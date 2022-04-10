@@ -29,8 +29,17 @@ byte lastcindex = 0;
 // brightness
 byte brightness = 128;
 
+// nightmode
+struct ntime_t {
+    byte hour;
+    byte min5;
+};
+ntime_t ton = {0, 5};
+ntime_t toff = {0, 0};
+bool nightmode = true;
+
 // isr variable for button interrupts
-volatile int button = 0;
+volatile byte button = 0;
 
 // Setup the LEDs
 Wordclock wordclock(LEDPIN);
@@ -193,9 +202,17 @@ void prog_clock(state_t& state, event_t& event) {
             wordclock.second = Clock.getSecond();
 
             wordclock.clear();
-            wordclock.update();
-            wordclock.show();
 
+            if (nightmode &&
+                wordclock.hour >= toff.hour &&
+                wordclock.minute >= toff.min5 &&
+                wordclock.hour <= ton.hour &&
+                wordclock.minute < ton.min5) {
+                wordclock.update(WordClockState({0,0,0,0,0,0,0,0}));
+            } else {
+                wordclock.update();
+            }
+            wordclock.show();
             sendClockState(cindex, wordclock.getState());
             break;
 
