@@ -25,6 +25,7 @@ bool pm = false;
 // color index
 byte cindex = 51;
 byte lastcindex = 0;
+bool rainbow = false;
 
 // brightness
 byte brightness = 128;
@@ -188,6 +189,13 @@ void prog_clock(state_t& state, event_t& event) {
         case EVT_CLOCK:
             Clock.checkIfAlarm(2);
             delay(10);
+
+            if (rainbow) {
+                cindex++;
+                cindex %= 102;
+                ccode(cindex, wordclock.color);
+            }
+
             wordclock.hour = Clock.getHour(h12, pm);
             wordclock.minute = Clock.getMinute();
             wordclock.second = Clock.getSecond();
@@ -228,8 +236,23 @@ void prog_clock(state_t& state, event_t& event) {
             if (cindex > 101) {
                 cindex = lastcindex;
             } else {
-                lastcindex = cindex;
-                cindex = 255;
+                if (rainbow) {
+                    lastcindex = cindex;
+                    cindex = 255;
+                    rainbow = false;
+                } else {
+                    rainbow = true;
+                    for (size_t rep = 0; rep < 2; rep++) {
+                        wordclock.clear();
+                        wordclock.show();
+                        sendClockState(cindex, WordClockState());
+                        delay(100);
+                        wordclock.update();
+                        wordclock.show();
+                        sendClockState(cindex, wordclock.getState());
+                        delay(100);
+                    }
+                }
             }
             ccode(cindex, wordclock.color);
             event_buffer = EVT_CLOCK;
