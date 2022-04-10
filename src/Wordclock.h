@@ -23,13 +23,19 @@ public:
     static const WordClockState AM;
     static const WordClockState PM;
 
+    static const WordClockState ON;
+    static const WordClockState OFF;
+
+    static const WordClockState TON;
+    static const WordClockState TOFF;
+
     static const WordClockState MSKMIN5;
     static const WordClockState MSKHOUR;
 
     static const WordClockState INITPIC;
 
     static const WordClockState BRIGHTNESS;
-    static const WordClockState TOFF;
+    static const WordClockState NIGHTMODE;
     static const WordClockState SET;
 
 

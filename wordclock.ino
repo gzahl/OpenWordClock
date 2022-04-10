@@ -38,11 +38,11 @@ Wordclock wordclock(LEDPIN);
 
 // state definitions
 enum state_t {
-    ST_CLOCK,
-    ST_MENU,
-    ST_SET,
-    ST_TOFF,
-    ST_BRIGHTNESS
+    ST_CLOCK,           // basic clock state
+    ST_MENU,            // Menu display state
+    ST_SET,             // Time setting mode
+    ST_NIGHTMODE,       // Nightmode settings
+    ST_BRIGHTNESS       // Brightness settings
 };
 
 // event definitions
@@ -153,8 +153,8 @@ void loop() {
         case ST_BRIGHTNESS:
             prog_brightness(state, event);
             break;
-        case ST_TOFF:
-            prog_toff(state, event);
+        case ST_NIGHTMODE:
+            prog_nightmode(state, event);
             break;
     }
 
@@ -274,7 +274,7 @@ void prog_clock(state_t& state, event_t& event) {
 }
 
 void prog_menu(state_t& state, event_t& event) {
-    enum menuitem_t {set, toff, brightness, count};
+    enum menuitem_t {set, nightmode, brightness, count};
     static int menuitem = set;
     switch (event) {
         case EVT_UP:
@@ -286,8 +286,8 @@ void prog_menu(state_t& state, event_t& event) {
                 case set:
                     state = ST_SET;
                     break;
-                case toff:
-                    state = ST_TOFF;
+                case nightmode:
+                    state = ST_NIGHTMODE;
                     break;
                 case brightness:
                     state = ST_BRIGHTNESS;
@@ -309,9 +309,9 @@ void prog_menu(state_t& state, event_t& event) {
                 wordclock.update(Wordclock::SET);
                 sendClockState(cindex, Wordclock::SET);
                 break;
-            case toff:
-                wordclock.update(Wordclock::TOFF);
-                sendClockState(cindex, Wordclock::TOFF);
+            case nightmode:
+                wordclock.update(Wordclock::NIGHTMODE);
+                sendClockState(cindex, Wordclock::NIGHTMODE);
                 break;
             case brightness:
                 wordclock.update(Wordclock::BRIGHTNESS);
@@ -488,8 +488,8 @@ void prog_set(state_t& state, event_t& event) {
     return;
 }
 
-void prog_toff(state_t& state, event_t& event) {
-    Serial.println("Prog: toff");
+void prog_nightmode(state_t& state, event_t& event) {
+    Serial.println("Prog: nightmode");
     state = ST_CLOCK;
     event_buffer = EVT_CLOCK;
     return;
