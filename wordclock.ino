@@ -34,9 +34,9 @@ struct ntime_t {
     byte hour;
     byte min5;
 };
-ntime_t ton = {0, 5};
+ntime_t ton = {0, 0};
 ntime_t toff = {0, 0};
-bool nightmode = true;
+bool nightmode = false;
 
 // isr variable for button interrupts
 volatile byte button = 0;
@@ -506,9 +506,163 @@ void prog_set(state_t& state, event_t& event) {
 }
 
 void prog_nightmode(state_t& state, event_t& event) {
-    Serial.println("Prog: nightmode");
-    state = ST_CLOCK;
-    event_buffer = EVT_CLOCK;
+
+    enum setting_t {sactive, soffmin5, soffhour, sonmin5, sonhour};
+    static setting_t setting = sactive;
+
+    static ntime_t buffer_ton = {ton.hour, ton.min5};
+    static ntime_t buffer_toff = {toff.hour, toff.min5};
+    static bool buffer_nightmode = nightmode;
+
+    static byte lastevent;
+    static byte lastupdate;
+    static byte elapsed;
+
+    static WordClockState WCstate;
+
+    switch (event) {
+        case EVT_UP:
+            switch (setting) {
+                case sactive:
+                    buffer_nightmode = !buffer_nightmode;
+                    break;
+                case sonmin5:
+                    buffer_ton.min5 += 5;
+                    buffer_ton.min5 %= 60;
+                    break;
+                case sonhour:
+                    buffer_ton.hour += 1;
+                    buffer_ton.hour %= 12;
+                    break;
+                case soffmin5:
+                    buffer_toff.min5 += 5;
+                    buffer_toff.min5 %= 60;
+                    break;
+                case soffhour:
+                    buffer_ton.hour += 1;
+                    buffer_ton.hour %= 12;
+                    break;
+            }
+            break;
+        case EVT_SET:
+            switch (setting) {
+                case sactive:
+                    if (buffer_nightmode) {
+                        wordclock.clear();
+                        wordclock.update(Wordclock::TOFF);
+                        wordclock.show();
+                        sendClockState(cindex, Wordclock::TOFF);
+                        setting = soffmin5;
+                        delay(1000);
+                    } else {
+                        nightmode = false;
+                        state = ST_CLOCK;
+                        event_buffer = EVT_CLOCK;
+                    }
+                    break;
+                case soffmin5:
+                    setting = soffhour;
+                    break;
+                case soffhour:
+                    wordclock.clear();
+                    wordclock.update(Wordclock::TON);
+                    wordclock.show();
+                    sendClockState(cindex, Wordclock::TON);
+                    setting = sonmin5;
+                    delay(1000);
+                    break;
+                case sonmin5:
+                    setting = sonhour;
+                    break;
+                case sonhour:
+                    setting = sactive;
+                    ton.hour = buffer_ton.hour;
+                    ton.min5 = buffer_ton.min5;
+                    toff.hour = buffer_toff.hour;
+                    toff.min5 = buffer_toff.min5;
+                    nightmode = true;
+                    state = ST_CLOCK;
+                    event_buffer = EVT_CLOCK;
+                    break;
+            }
+        case EVT_DOWN:
+            switch (setting) {
+                case sactive:
+                    buffer_nightmode = !buffer_nightmode;
+                    break;
+                case sonmin5:
+                    buffer_ton.min5 += 55;
+                    buffer_ton.min5 %= 60;
+                    break;
+                case sonhour:
+                    buffer_ton.hour += 11;
+                    buffer_ton.hour %= 12;
+                    break;
+                case soffmin5:
+                    buffer_toff.min5 += 55;
+                    buffer_toff.min5 %= 60;
+                    break;
+                case soffhour:
+                    buffer_ton.hour += 11;
+                    buffer_ton.hour %= 12;
+                    break;
+            }
+            break;
+        case EVT_TIMEOUT:
+            setting = sactive;
+            state = ST_CLOCK;
+            event_buffer = EVT_CLOCK;
+            break;
+    }
+
+    if (elapsed != lastupdate) {
+        if (elapsed % 2) {
+            switch (setting) {
+                case sonmin5:
+                case sonhour:
+                    Wordclock::getState(WCstate, buffer_ton.hour, buffer_ton.min5, 0);
+                    break;
+                case soffmin5:
+                case soffhour:
+                    Wordclock::getState(WCstate, buffer_toff.hour, buffer_toff.min5, 0);
+                    break;
+                case sactive:
+                    if (buffer_nightmode) {
+                        WCstate = Wordclock::ON;
+                    } else {
+                        WCstate = Wordclock::OFF;
+                    }
+                    break;
+            }
+        } else {
+            switch (setting) {
+                case sonhour:
+                case soffhour:
+                    WCstate &= (~Wordclock::MSKHOUR);
+                    break;
+                case sonmin5:
+                case soffmin5:
+                    WCstate &= (~Wordclock::MSKMIN5);
+                    break;
+                case sactive:
+                    WCstate = WordClockState({0, 0, 0, 0, 0, 0, 0, 0});
+                    break;
+            }
+
+        }
+
+        wordclock.clear();
+        wordclock.update(WCstate);
+        wordclock.show();
+        sendClockState(cindex, WCstate);
+        lastupdate = elapsed;
+    }
+
+    if (event != EVT_NONE) {
+        lastevent = millis()/1000;
+        elapsed = 0;
+    }
+    elapsed = millis()/1000 - lastevent;
     return;
 }
 
