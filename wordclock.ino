@@ -17,6 +17,10 @@
 // Timeout setting
 #define TIMEOUT 60
 
+// minimum dynamic brightness
+#define MINDYNBRIGHTNESS 5
+
+
 // Setup Clock
 DS3231 Clock;
 bool h12 = false;
@@ -29,6 +33,7 @@ bool rainbow = false;
 
 // brightness
 byte brightness = 128;
+bool dynbrightness = false;
 
 // nightmode
 struct ntime_t {
@@ -52,7 +57,8 @@ enum state_t {
     ST_MENU,            // Menu display state
     ST_SET,             // Time setting mode
     ST_NIGHTMODE,       // Nightmode settings
-    ST_BRIGHTNESS       // Brightness settings
+    ST_BRIGHTNESS,      // Brightness settings
+    ST_DYNBRIGHTNESS    // Dynamic Brightness on/off setting
 };
 
 // event definitions
@@ -162,6 +168,9 @@ void loop() {
             break;
         case ST_BRIGHTNESS:
             prog_brightness(state, event);
+            break;
+        case ST_DYNBRIGHTNESS:
+            prog_dynbrightness(state, event);
             break;
         case ST_NIGHTMODE:
             prog_nightmode(state, event);
@@ -313,8 +322,8 @@ void prog_clock(state_t& state, event_t& event) {
     return;
 }
 
-void prog_menu(state_t& state, event_t& event) {
-    enum menuitem_t {set, nightmode, brightness, count};
+ void prog_menu(state_t& state, event_t& event) {
+    enum menuitem_t {set, nightmode, brightness, dynbrightness, count};
     static int menuitem = set;
     switch (event) {
         case EVT_UP:
@@ -331,6 +340,9 @@ void prog_menu(state_t& state, event_t& event) {
                     break;
                 case brightness:
                     state = ST_BRIGHTNESS;
+                    break;
+                case dynbrightness:
+                    state = ST_DYNBRIGHTNESS;
                     break;
             }
             break;
@@ -356,6 +368,10 @@ void prog_menu(state_t& state, event_t& event) {
             case brightness:
                 wordclock.update(Wordclock::BRIGHTNESS);
                 sendClockState(cindex, Wordclock::BRIGHTNESS);
+                break;
+            case dynbrightness:
+                wordclock.update(Wordclock::DYNAMICBRIGHTNESS);
+                sendClockState(cindex, Wordclock::DYNAMICBRIGHTNESS);
                 break;
         }
         wordclock.show();
@@ -733,6 +749,12 @@ void prog_brightness(state_t& state, event_t& event) {
         Serial.print(F("Brightness: "));
         Serial.println(brightness);
     }
+    return;
+}
+
+void prog_dynbrightness(state_t& state, event_t& event) {
+    state = ST_CLOCK;
+    event_buffer = EVT_CLOCK;
     return;
 }
 
