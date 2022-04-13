@@ -343,6 +343,7 @@ void prog_clock(state_t& state, event_t& event) {
                     break;
                 case dynbrightness:
                     state = ST_DYNBRIGHTNESS;
+                    event_buffer = EVT_CLOCK;
                     break;
             }
             break;
@@ -753,8 +754,27 @@ void prog_brightness(state_t& state, event_t& event) {
 }
 
 void prog_dynbrightness(state_t& state, event_t& event) {
-    state = ST_CLOCK;
-    event_buffer = EVT_CLOCK;
+    switch (event) {
+        case EVT_UP:
+        case EVT_DOWN:
+            dynbrightness = !dynbrightness;
+            break;
+        case EVT_SET:
+        case EVT_TIMEOUT:
+            state = ST_CLOCK;
+            event_buffer = EVT_CLOCK;
+            break;
+    }
+    if (event != EVT_NONE) {
+        wordclock.clear();
+        if (dynbrightness) {
+            wordclock.update(Wordclock::ON);
+        } else {
+            wordclock.update(Wordclock::OFF);
+        }
+        sendClockState(cindex, wordclock.getState());
+        wordclock.show();
+    }
     return;
 }
 
