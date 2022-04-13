@@ -52,7 +52,8 @@ enum state_t {
     ST_MENU,            // Menu display state
     ST_SET,             // Time setting mode
     ST_NIGHTMODE,       // Nightmode settings
-    ST_BRIGHTNESS       // Brightness settings
+    ST_BRIGHTNESS,      // Brightness settings
+    ST_TEMPERATURE      // Temperature display
 };
 
 // event definitions
@@ -165,6 +166,9 @@ void loop() {
             break;
         case ST_NIGHTMODE:
             prog_nightmode(state, event);
+            break;
+        case ST_TEMPERATURE:
+            prog_temperature(state, event);
             break;
     }
 
@@ -314,7 +318,7 @@ void prog_clock(state_t& state, event_t& event) {
 }
 
 void prog_menu(state_t& state, event_t& event) {
-    enum menuitem_t {set, nightmode, brightness, count};
+    enum menuitem_t {set, nightmode, brightness, temperature, count};
     static int menuitem = set;
     switch (event) {
         case EVT_UP:
@@ -331,6 +335,9 @@ void prog_menu(state_t& state, event_t& event) {
                     break;
                 case brightness:
                     state = ST_BRIGHTNESS;
+                    break;
+                case temperature:
+                    state = ST_TEMPERATURE;
                     break;
             }
             break;
@@ -356,6 +363,10 @@ void prog_menu(state_t& state, event_t& event) {
             case brightness:
                 wordclock.update(Wordclock::BRIGHTNESS);
                 sendClockState(cindex, Wordclock::BRIGHTNESS);
+                break;
+            case temperature:
+                wordclock.update(Wordclock::TEMPERATURE);
+                sendClockState(cindex, Wordclock::TEMPERATURE);
                 break;
         }
         wordclock.show();
@@ -733,6 +744,27 @@ void prog_brightness(state_t& state, event_t& event) {
         Serial.print(F("Brightness: "));
         Serial.println(brightness);
     }
+    return;
+}
+
+void prog_temperature(state_t& state, event_t& event) {
+
+    switch (event) {
+        case EVT_DOWN:
+        case EVT_SET:
+        case EVT_UP:
+        case EVT_TIMEOUT:
+            state = ST_CLOCK;
+            event_buffer = EVT_CLOCK;
+            break;
+        case EVT_NONE:
+            byte temp = Clock.getTemperature();
+            wordclock.clear();
+            wordclock.update(Wordclock::SEC[temp % 10] | Wordclock::SEC[temp / 10 + 10]);
+            wordclock.show();
+            sendClockState(cindex, Wordclock::SEC[temp % 10] | Wordclock::SEC[temp / 10 + 10]);
+            break;
+        }
     return;
 }
 

@@ -37,6 +37,7 @@ public:
     static const WordClockState BRIGHTNESS;
     static const WordClockState NIGHTMODE;
     static const WordClockState SET;
+    static const WordClockState TEMPERATURE;
 
 
     WordClockState state;
