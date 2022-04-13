@@ -364,6 +364,10 @@ void prog_menu(state_t& state, event_t& event) {
                 wordclock.update(Wordclock::BRIGHTNESS);
                 sendClockState(cindex, Wordclock::BRIGHTNESS);
                 break;
+            case temperature:
+                wordclock.update(Wordclock::TEMPERATURE);
+                sendClockState(cindex, Wordclock::TEMPERATURE);
+                break;
         }
         wordclock.show();
     }
@@ -744,8 +748,12 @@ void prog_brightness(state_t& state, event_t& event) {
 }
 
 void prog_temperature(state_t& state, event_t& event) {
-    state = ST_CLOCK;
-    event = EVT_CLOCK;
+
+    if (event != EVT_NONE) {
+        state = ST_CLOCK;
+        event = EVT_CLOCK;
+    }
+    return;
 }
 
 // ============================================================================
