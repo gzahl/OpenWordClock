@@ -52,7 +52,8 @@ enum state_t {
     ST_MENU,            // Menu display state
     ST_SET,             // Time setting mode
     ST_NIGHTMODE,       // Nightmode settings
-    ST_BRIGHTNESS       // Brightness settings
+    ST_BRIGHTNESS,      // Brightness settings
+    ST_TEMPERATURE      // Temperature display
 };
 
 // event definitions
@@ -165,6 +166,9 @@ void loop() {
             break;
         case ST_NIGHTMODE:
             prog_nightmode(state, event);
+            break;
+        case ST_TEMPERATURE:
+            prog_temperature(state, event);
             break;
     }
 
@@ -314,7 +318,7 @@ void prog_clock(state_t& state, event_t& event) {
 }
 
 void prog_menu(state_t& state, event_t& event) {
-    enum menuitem_t {set, nightmode, brightness, count};
+    enum menuitem_t {set, nightmode, brightness, temperature, count};
     static int menuitem = set;
     switch (event) {
         case EVT_UP:
@@ -331,6 +335,9 @@ void prog_menu(state_t& state, event_t& event) {
                     break;
                 case brightness:
                     state = ST_BRIGHTNESS;
+                    break;
+                case temperature:
+                    state = ST_TEMPERATURE;
                     break;
             }
             break;
@@ -734,6 +741,11 @@ void prog_brightness(state_t& state, event_t& event) {
         Serial.println(brightness);
     }
     return;
+}
+
+void prog_temperature(state_t& state, event_t& event) {
+    state = ST_CLOCK;
+    event = EVT_CLOCK;
 }
 
 // ============================================================================
