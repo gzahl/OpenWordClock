@@ -13,6 +13,7 @@
 #define BUP 10
 #define BSET 9
 #define BDOWN 8
+#define PD A0
 
 // Timeout setting
 #define TIMEOUT 60
@@ -113,6 +114,10 @@ void setup() {
     attachPCINT(digitalPinToPCINT(BSET), isr_bset, FALLING);
     attachPCINT(digitalPinToPCINT(BDOWN), isr_bdown, FALLING);
 
+    // setup up adc for dynamic brightness
+    analogReference(INTERNAL);
+    pinMode(PD, INPUT);
+
     // Begin Serial communication
     Serial.begin(9600);
     Serial.println(F("OpenWordClock"));
@@ -207,6 +212,12 @@ void prog_clock(state_t& state, event_t& event) {
         case EVT_CLOCK:
             Clock.checkIfAlarm(2);
             delay(10);
+
+            if (dynbrightness) {
+                setdynamicbrightness(brightness);
+                Serial.print(F("Brightness: "));
+                Serial.println(brightness);
+            }
 
             if (rainbow) {
                 cindex++;
@@ -909,5 +920,20 @@ void GoToSleep() {
     digitalWrite(LED_BUILTIN, HIGH);
     sleep_disable();
     delay(100);
+    return;
+}
+
+void setdynamicbrightness(uint8_t& brightness) {
+    static uint8_t limits[] = {255, 0};
+    uint8_t readout;
+
+    readout = analogRead(PD)>>2;
+    if (readout < limits[0]) {
+        limits[0] = readout;
+    } else if (readout > limits[1]) {
+        limits[0] = readout;
+    }
+
+    brightness = max(255*readout/(limits[1] - limits[0]), MINDYNBRIGHTNESS);
     return;
 }
