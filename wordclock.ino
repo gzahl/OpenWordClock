@@ -13,9 +13,14 @@
 #define BUP 10
 #define BSET 9
 #define BDOWN 8
+#define PD A0
 
 // Timeout setting
 #define TIMEOUT 60
+
+// minimum dynamic brightness
+#define MINDYNBRIGHTNESS 5
+
 
 // Setup Clock
 DS3231 Clock;
@@ -29,6 +34,7 @@ bool rainbow = false;
 
 // brightness
 byte brightness = 128;
+bool dynbrightness = false;
 
 // nightmode
 struct ntime_t {
@@ -53,7 +59,8 @@ enum state_t {
     ST_SET,             // Time setting mode
     ST_NIGHTMODE,       // Nightmode settings
     ST_BRIGHTNESS,      // Brightness settings
-    ST_TEMPERATURE      // Temperature display
+    ST_TEMPERATURE,      // Temperature display
+    ST_DYNBRIGHTNESS    // Dynamic Brightness on/off setting
 };
 
 // event definitions
@@ -107,6 +114,10 @@ void setup() {
     attachPCINT(digitalPinToPCINT(BUP), isr_bup, FALLING);
     attachPCINT(digitalPinToPCINT(BSET), isr_bset, FALLING);
     attachPCINT(digitalPinToPCINT(BDOWN), isr_bdown, FALLING);
+
+    // setup up adc for dynamic brightness
+    analogReference(INTERNAL);
+    pinMode(PD, INPUT);
 
     // Begin Serial communication
     Serial.begin(9600);
@@ -164,6 +175,9 @@ void loop() {
         case ST_BRIGHTNESS:
             prog_brightness(state, event);
             break;
+        case ST_DYNBRIGHTNESS:
+            prog_dynbrightness(state, event);
+            break;
         case ST_NIGHTMODE:
             prog_nightmode(state, event);
             break;
@@ -202,6 +216,12 @@ void prog_clock(state_t& state, event_t& event) {
         case EVT_CLOCK:
             Clock.checkIfAlarm(2);
             delay(10);
+
+            if (dynbrightness) {
+                setdynamicbrightness(brightness);
+                Serial.print(F("Brightness: "));
+                Serial.println(brightness);
+            }
 
             if (rainbow) {
                 cindex++;
@@ -317,8 +337,8 @@ void prog_clock(state_t& state, event_t& event) {
     return;
 }
 
-void prog_menu(state_t& state, event_t& event) {
-    enum menuitem_t {set, nightmode, brightness, temperature, count};
+ void prog_menu(state_t& state, event_t& event) {
+    enum menuitem_t {set, nightmode, brightness, dynbrightness, temperature, count};
     static int menuitem = set;
     switch (event) {
         case EVT_UP:
@@ -338,6 +358,10 @@ void prog_menu(state_t& state, event_t& event) {
                     break;
                 case temperature:
                     state = ST_TEMPERATURE;
+                    break;
+                case dynbrightness:
+                    state = ST_DYNBRIGHTNESS;
+                    event_buffer = EVT_CLOCK;
                     break;
             }
             break;
@@ -363,6 +387,10 @@ void prog_menu(state_t& state, event_t& event) {
             case brightness:
                 wordclock.update(Wordclock::BRIGHTNESS);
                 sendClockState(cindex, Wordclock::BRIGHTNESS);
+                break;
+            case dynbrightness:
+                wordclock.update(Wordclock::DYNAMICBRIGHTNESS);
+                sendClockState(cindex, Wordclock::DYNAMICBRIGHTNESS);
                 break;
             case temperature:
                 wordclock.update(Wordclock::TEMPERATURE);
@@ -765,6 +793,31 @@ void prog_temperature(state_t& state, event_t& event) {
             sendClockState(cindex, Wordclock::SEC[temp % 10] | Wordclock::SEC[temp / 10 + 10]);
             break;
         }
+        return;
+    }
+
+void prog_dynbrightness(state_t& state, event_t& event) {
+    switch (event) {
+        case EVT_UP:
+        case EVT_DOWN:
+            dynbrightness = !dynbrightness;
+            break;
+        case EVT_SET:
+        case EVT_TIMEOUT:
+            state = ST_CLOCK;
+            event_buffer = EVT_CLOCK;
+            break;
+    }
+    if (event != EVT_NONE) {
+        wordclock.clear();
+        if (dynbrightness) {
+            wordclock.update(Wordclock::ON);
+        } else {
+            wordclock.update(Wordclock::OFF);
+        }
+        sendClockState(cindex, wordclock.getState());
+        wordclock.show();
+    }
     return;
 }
 
@@ -899,5 +952,20 @@ void GoToSleep() {
     digitalWrite(LED_BUILTIN, HIGH);
     sleep_disable();
     delay(100);
+    return;
+}
+
+void setdynamicbrightness(uint8_t& brightness) {
+    static uint8_t limits[] = {255, 0};
+    uint8_t readout;
+
+    readout = analogRead(PD)>>2;
+    if (readout < limits[0]) {
+        limits[0] = readout;
+    } else if (readout > limits[1]) {
+        limits[0] = readout;
+    }
+
+    brightness = max(255*readout/(limits[1] - limits[0]), MINDYNBRIGHTNESS);
     return;
 }

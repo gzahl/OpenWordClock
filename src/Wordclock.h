@@ -38,7 +38,7 @@ public:
     static const WordClockState NIGHTMODE;
     static const WordClockState SET;
     static const WordClockState TEMPERATURE;
-
+    static const WordClockState DYNAMICBRIGHTNESS;
 
     WordClockState state;
     byte hour;
