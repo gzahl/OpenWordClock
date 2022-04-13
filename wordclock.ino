@@ -749,10 +749,22 @@ void prog_brightness(state_t& state, event_t& event) {
 
 void prog_temperature(state_t& state, event_t& event) {
 
-    if (event != EVT_NONE) {
-        state = ST_CLOCK;
-        event = EVT_CLOCK;
-    }
+    switch (event) {
+        case EVT_DOWN:
+        case EVT_SET:
+        case EVT_UP:
+        case EVT_TIMEOUT:
+            state = ST_CLOCK;
+            event_buffer = EVT_CLOCK;
+            break;
+        case EVT_NONE:
+            byte temp = Clock.getTemperature();
+            wordclock.clear();
+            wordclock.update(Wordclock::SEC[temp % 10] | Wordclock::SEC[temp / 10 + 10]);
+            wordclock.show();
+            sendClockState(cindex, Wordclock::SEC[temp % 10] | Wordclock::SEC[temp / 10 + 10]);
+            break;
+        }
     return;
 }
 
