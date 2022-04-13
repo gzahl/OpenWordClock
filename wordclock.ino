@@ -109,8 +109,8 @@ void setup() {
 
     // Begin Serial communication
     Serial.begin(9600);
-    Serial.println("OpenWordClock");
-    Serial.print("Firmware Version ");
+    Serial.println(F("OpenWordClock"));
+    Serial.print(F("Firmware Version "));
     Serial.println(VERSION);
 
     // Begin Wordclock LED control
@@ -700,7 +700,7 @@ void prog_brightness(state_t& state, event_t& event) {
                 wordclock.setBrightness(++brightness);
                 wordclock.update();
                 wordclock.show();
-                Serial.print("Brightness: ");
+                Serial.print(F("Brightness: "));
                 Serial.println(brightness);
                 delay(10);
             }
@@ -714,7 +714,7 @@ void prog_brightness(state_t& state, event_t& event) {
                 wordclock.setBrightness(--brightness);
                 wordclock.update();
                 wordclock.show();
-                Serial.print("Brightness: ");
+                Serial.print(F("Brightness: "));
                 Serial.println(brightness);
                 delay(10);
             }
@@ -730,7 +730,7 @@ void prog_brightness(state_t& state, event_t& event) {
         wordclock.setBrightness(brightness);
         wordclock.update();
         wordclock.show();
-        Serial.print("Brightness: ");
+        Serial.print(F("Brightness: "));
         Serial.println(brightness);
     }
     return;
@@ -823,7 +823,7 @@ void sendClockState(const int& cindex, const WordClockState& state) {
     Serial.print(" ");
     for (size_t index = 0; index < 8; index++) {
         Serial.print(state.getWord(index), HEX);
-        Serial.print(" ");
+        Serial.print(F(" "));
     }
     Serial.println();
     delay(10);
