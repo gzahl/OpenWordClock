@@ -34,7 +34,7 @@ bool rainbow = false;
 
 // brightness
 byte brightness = 128;
-bool dynbrightness = false;
+bool dynbrightness = true;
 
 // nightmode
 // struct ntime_t {
@@ -964,12 +964,17 @@ void setdynamicbrightness(uint8_t& brightness) {
     uint8_t readout;
 
     readout = analogRead(PD)>>2;
+    Serial.print(limits[0]);
+    Serial.print(F(" "));
+    Serial.print(limits[1]);
+    Serial.print(F(" "));
+    Serial.println(readout);
     if (readout < limits[0]) {
         limits[0] = readout;
     } else if (readout > limits[1]) {
-        limits[0] = readout;
+        limits[1] = readout;
     }
 
-    brightness = max(255*readout/(limits[1] - limits[0]), MINDYNBRIGHTNESS);
+    brightness = max(255*(readout-limits[0])/(limits[1] - limits[0]), MINDYNBRIGHTNESS);
     return;
 }
