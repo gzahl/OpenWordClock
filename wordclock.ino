@@ -5,7 +5,7 @@
 #include "src/Wordclock.h"
 
 // Version Number
-#define VERSION "v0.1.0"
+#define VERSION "v0.2.1"
 
 // Button and clock pins
 #define CLINT 2
