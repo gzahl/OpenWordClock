@@ -23,11 +23,11 @@ WordClockState::WordClockState (
 ) : value{a, b, c, d, e, f, g, h} {
 };
 
-unsigned short WordClockState::getWord (const int index) {
+unsigned short WordClockState::getWord (const short index) {
     return value[index];
 }
 
-bool WordClockState::getBit (const int index) {
+bool WordClockState::getBit (const short index) {
     return ((value[index/WCWORDSIZE] >> (index%WCWORDSIZE)) & 0x1);
 }
 
@@ -134,11 +134,11 @@ WordClockState& WordClockState::operator|= (const unsigned short rhs) {
     return *this;
 }
 
-int WordClockState::operator& (const int& rhs){
+short WordClockState::operator& (const short& rhs){
     return value[0] & rhs;
 }
 
-int WordClockState::operator| (const int& rhs){
+short WordClockState::operator| (const short& rhs){
     return value[0] | rhs;
 }
 

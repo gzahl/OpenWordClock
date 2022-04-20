@@ -23,8 +23,8 @@ public:
         unsigned short h
     );
 
-    unsigned short getWord(const int index);
-    bool getBit(const int index);
+    unsigned short getWord(const short index);
+    bool getBit(const short index);
 
 
     WordClockState operator~ ();
@@ -41,8 +41,8 @@ public:
 
     WordClockState& operator&= (const unsigned short rhs);
     WordClockState& operator|= (const unsigned short rhs);
-    int operator& (const int& rhs);
-    int operator| (const int& rhs);
+    short operator& (const short& rhs);
+    short operator| (const short& rhs);
 };
 
 #endif
