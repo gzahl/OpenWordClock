@@ -20,14 +20,14 @@ public:
     static const WordClockState SEC[20];
     static const WordClockState UHR;
 
-    static const WordClockState AM;
-    static const WordClockState PM;
+    // static const WordClockState AM;
+    // static const WordClockState PM;
 
     static const WordClockState ON;
     static const WordClockState OFF;
 
-    static const WordClockState TON;
-    static const WordClockState TOFF;
+    // static const WordClockState TON;
+    // static const WordClockState TOFF;
 
     static const WordClockState MSKMIN5;
     static const WordClockState MSKHOUR;
@@ -35,7 +35,7 @@ public:
     static const WordClockState INITPIC;
 
     static const WordClockState BRIGHTNESS;
-    static const WordClockState NIGHTMODE;
+    // static const WordClockState NIGHTMODE;
     static const WordClockState SET;
     static const WordClockState TEMPERATURE;
     static const WordClockState DYNAMICBRIGHTNESS;
