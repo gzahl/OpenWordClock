@@ -32,13 +32,11 @@ public:
     static const WordClockState MSKMIN5;
     static const WordClockState MSKHOUR;
 
-    // static const WordClockState INITPIC;
-
-    static const WordClockState BRIGHTNESS;
+    // static const WordClockState BRIGHTNESS;
     // static const WordClockState NIGHTMODE;
-    static const WordClockState SET;
-    static const WordClockState TEMPERATURE;
-    static const WordClockState DYNAMICBRIGHTNESS;
+    // static const WordClockState SET;
+    // static const WordClockState TEMPERATURE;
+    // static const WordClockState DYNAMICBRIGHTNESS;
 
     WordClockState state;
     byte hour;

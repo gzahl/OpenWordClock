@@ -23,6 +23,11 @@
 
 // Images to display
 const PROGMEM uint16_t INITPIC[] {0x078f, 0x0221, 0x1805, 0xfc60, 0x0611, 0x1029, 0x7821, 0x0000};
+const PROGMEM uint16_t SET[] {0x0880, 0x6429, 0xc000, 0x290f, 0x0084, 0x0040, 0x043f, 0x0000};
+const PROGMEM uint16_t BRIGHTNESS[] {0x4200, 0x0444, 0x80e1, 0xdf4f, 0xe088, 0x5040, 0x2044, 0x0000};
+const PROGMEM uint16_t DYNAMICBRIGHTNESS[] {0x4200, 0x0444, 0x80e1, 0xde0f, 0x8038, 0x7c40, 0x8042, 0x0001};
+const PROGMEM uint16_t TEMPERATURE[] {0x0000, 0x0a20, 0x0200, 0x3f00, 0x0902, 0x1024, 0x0021, 0x0000};
+const PROGMEM uint16_t NIGHTMODE[] {0x0780, 0xfe3f, 0x361d, 0x8070, 0x7241, 0x0440, 0x0470, 0x0000};
 
 
 // Setup Clock
@@ -135,10 +140,9 @@ void setup() {
 
     ccode(cindex, wordclock.color);
 
-    uint16_t output[8];
-    statefromflash(output, INITPIC);
-
-    WordClockState initpic(output);
+    uint16_t buffer[8];
+    statefromflash(buffer, INITPIC);
+    WordClockState initpic(buffer);
 
     wordclock.clear();
     wordclock.update(initpic);
@@ -349,6 +353,9 @@ void prog_clock(state_t& state, event_t& event) {
  void prog_menu(state_t& state, event_t& event) {
     enum menuitem_t {set, nightmode, brightness, dynbrightness, temperature, count};
     static int menuitem = set;
+
+    uint16_t stbuffer[8];
+
     switch (event) {
         case EVT_UP:
             menuitem++;
@@ -386,26 +393,24 @@ void prog_clock(state_t& state, event_t& event) {
         wordclock.clear();
         switch (menuitem) {
             case set:
-                wordclock.update(Wordclock::SET);
-                sendClockState(cindex, Wordclock::SET);
+                statefromflash(stbuffer, SET);
                 break;
             // case nightmode:
-            //     wordclock.update(Wordclock::NIGHTMODE);
-            //     sendClockState(cindex, Wordclock::NIGHTMODE);
+            //     statefromflash(stbuffer, NIGHTMODE);
             //     break;
             case brightness:
-                wordclock.update(Wordclock::BRIGHTNESS);
-                sendClockState(cindex, Wordclock::BRIGHTNESS);
+                statefromflash(stbuffer, BRIGHTNESS);
                 break;
             case dynbrightness:
-                wordclock.update(Wordclock::DYNAMICBRIGHTNESS);
-                sendClockState(cindex, Wordclock::DYNAMICBRIGHTNESS);
+                statefromflash(stbuffer, DYNAMICBRIGHTNESS);
                 break;
             case temperature:
-                wordclock.update(Wordclock::TEMPERATURE);
-                sendClockState(cindex, Wordclock::TEMPERATURE);
+                statefromflash(stbuffer, TEMPERATURE);
                 break;
         }
+        const WordClockState display(stbuffer);
+        wordclock.update(display);
+        sendClockState(cindex, wordclock.getState());
         wordclock.show();
     }
     return;
@@ -918,7 +923,7 @@ void resolve_btn(event_t& evtout) {
 void sendClockState(const int& cindex, const WordClockState& state) {
     Serial.print(cindex);
     Serial.print(" ");
-    for (size_t index = 0; index < 8; index++) {
+    for (byte index = 0; index < 8; index++) {
         Serial.print(state.getWord(index), HEX);
         Serial.print(F(" "));
     }
