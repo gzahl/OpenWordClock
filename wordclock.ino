@@ -21,6 +21,9 @@
 // minimum dynamic brightness
 #define MINDYNBRIGHTNESS 5
 
+// Images to display
+const PROGMEM uint16_t INITPIC[] {0x078f, 0x0221, 0x1805, 0xfc60, 0x0611, 0x1029, 0x7821, 0x0000};
+
 
 // Setup Clock
 DS3231 Clock;
@@ -132,10 +135,15 @@ void setup() {
 
     ccode(cindex, wordclock.color);
 
+    uint16_t output[8];
+    statefromflash(output, INITPIC);
+
+    WordClockState initpic(output);
+
     wordclock.clear();
-    wordclock.update(wordclock.INITPIC);
+    wordclock.update(initpic);
     wordclock.show();
-    sendClockState(cindex, wordclock.INITPIC);
+    sendClockState(cindex, initpic);
 
     event_buffer = EVT_CLOCK;
     delay(2000);
@@ -977,4 +985,11 @@ void setdynamicbrightness(uint8_t& brightness) {
 
     brightness = max(255*(readout-limits[0])/(limits[1] - limits[0]), MINDYNBRIGHTNESS);
     return;
+}
+
+uint16_t* statefromflash(uint16_t* output, uint16_t* fromflash) {
+    for (byte index = 0; index < 8; index++) {
+        output[index] = pgm_read_word_near(fromflash + index);
+    }
+    return output;
 }

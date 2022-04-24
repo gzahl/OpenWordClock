@@ -32,7 +32,7 @@ public:
     static const WordClockState MSKMIN5;
     static const WordClockState MSKHOUR;
 
-    static const WordClockState INITPIC;
+    // static const WordClockState INITPIC;
 
     static const WordClockState BRIGHTNESS;
     // static const WordClockState NIGHTMODE;
