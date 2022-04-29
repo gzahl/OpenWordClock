@@ -23,8 +23,8 @@ public:
     // static const WordClockState AM;
     // static const WordClockState PM;
 
-    static const WordClockState ON;
-    static const WordClockState OFF;
+    // static const WordClockState ON;
+    // static const WordClockState OFF;
 
     // static const WordClockState TON;
     // static const WordClockState TOFF;

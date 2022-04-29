@@ -23,11 +23,15 @@
 
 // Images to display
 const PROGMEM uint16_t INITPIC[] {0x078f, 0x0221, 0x1805, 0xfc60, 0x0611, 0x1029, 0x7821, 0x0000};
+
 const PROGMEM uint16_t SET[] {0x0880, 0x6429, 0xc000, 0x290f, 0x0084, 0x0040, 0x043f, 0x0000};
 const PROGMEM uint16_t BRIGHTNESS[] {0x4200, 0x0444, 0x80e1, 0xdf4f, 0xe088, 0x5040, 0x2044, 0x0000};
 const PROGMEM uint16_t DYNAMICBRIGHTNESS[] {0x4200, 0x0444, 0x80e1, 0xde0f, 0x8038, 0x7c40, 0x8042, 0x0001};
 const PROGMEM uint16_t TEMPERATURE[] {0x0000, 0x0a20, 0x0200, 0x3f00, 0x0902, 0x1024, 0x0021, 0x0000};
 const PROGMEM uint16_t NIGHTMODE[] {0x0780, 0xfe3f, 0x361d, 0x8070, 0x7241, 0x0440, 0x0470, 0x0000};
+
+const PROGMEM uint16_t ON[] {0x0000, 0x041f, 0x8209, 0x000f, 0x41e0, 0x8200, 0x0003, 0x0000};
+const PROGMEM uint16_t OFF[] {0x8f80, 0x0420, 0x01f1, 0x1f80, 0x0024, 0x1f82, 0x0424, 0x0000};
 
 
 // Setup Clock
@@ -826,12 +830,17 @@ void prog_dynbrightness(state_t& state, event_t& event) {
             break;
     }
     if (event != EVT_NONE) {
+
+        uint16_t stbuffer[8];
+
         wordclock.clear();
         if (dynbrightness) {
-            wordclock.update(Wordclock::ON);
+            statefromflash(stbuffer, ON);
         } else {
-            wordclock.update(Wordclock::OFF);
+            statefromflash(stbuffer, OFF);
         }
+        const WordClockState display(stbuffer);
+        wordclock.update(display);
         sendClockState(cindex, wordclock.getState());
         wordclock.show();
     }
