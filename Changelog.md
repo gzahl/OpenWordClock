@@ -9,7 +9,7 @@
 
 ## v0.2.0
 
-| **ATTENTION:** |
+| ** :exclamation: ATTENTION:** |
 |-----|
 |This version of code is utilising too much SRAM and is not functional! It will not generate output to the display.|
 
