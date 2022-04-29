@@ -1,23 +1,18 @@
 # Changelog
 
+[[_TOC_]]
+
 ## v.0.2.1
 - Nightmode temporarily removed to reduce SRAM usage
 - SRAM usage below 70 %
 - Bug fixes on dynamic brightness
 
 ## v0.2.0
-**ATTENTION:** This version of code is utilising too much SRAM and is not functional! It will not generate output to the display.
-{: .note}
+| **ATTENTION:** |
+-----
+|This version of code is utilising too much SRAM and is not functional! It will not generate output to the display.|
 
-<div class="panel panel-warning">
-**Warning**
-{: .panel-heading}
-<div class="panel-body">
 
-This version of code is utilising too much SRAM and is not functional! It will not generate output to the display.
-
-</div>
-</div>
 
 - New states added: on, off, ton, toff
 - Nightmode added (causes excess SRAM usage)
