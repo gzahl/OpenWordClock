@@ -1,4 +1,4 @@
-#include <PinChangeInterrupt.h>
+      #include <PinChangeInterrupt.h>
 #include <avr/sleep.h>
 #include <DS3231.h>
 #include <Wire.h>
@@ -22,16 +22,39 @@
 #define MINDYNBRIGHTNESS 5
 
 // Images to display
-const PROGMEM uint16_t INITPIC[] {0x078f, 0x0221, 0x1805, 0xfc60, 0x0611, 0x1029, 0x7821, 0x0000};
+const PROGMEM uint16_t INITPIC[8] {0x078f, 0x0221, 0x1805, 0xfc60, 0x0611, 0x1029, 0x7821, 0x0000};
 
-const PROGMEM uint16_t SET[] {0x0880, 0x6429, 0xc000, 0x290f, 0x0084, 0x0040, 0x043f, 0x0000};
-const PROGMEM uint16_t BRIGHTNESS[] {0x4200, 0x0444, 0x80e1, 0xdf4f, 0xe088, 0x5040, 0x2044, 0x0000};
-const PROGMEM uint16_t DYNAMICBRIGHTNESS[] {0x4200, 0x0444, 0x80e1, 0xde0f, 0x8038, 0x7c40, 0x8042, 0x0001};
-const PROGMEM uint16_t TEMPERATURE[] {0x0000, 0x0a20, 0x0200, 0x3f00, 0x0902, 0x1024, 0x0021, 0x0000};
-const PROGMEM uint16_t NIGHTMODE[] {0x0780, 0xfe3f, 0x361d, 0x8070, 0x7241, 0x0440, 0x0470, 0x0000};
+const PROGMEM uint16_t SET[8] {0x0880, 0x6429, 0xc000, 0x290f, 0x0084, 0x0040, 0x043f, 0x0000};
+const PROGMEM uint16_t BRIGHTNESS[8] {0x4200, 0x0444, 0x80e1, 0xdf4f, 0xe088, 0x5040, 0x2044, 0x0000};
+const PROGMEM uint16_t DYNAMICBRIGHTNESS[8] {0x4200, 0x0444, 0x80e1, 0xde0f, 0x8038, 0x7c40, 0x8042, 0x0001};
+const PROGMEM uint16_t TEMPERATURE[8] {0x0000, 0x0a20, 0x0200, 0x3f00, 0x0902, 0x1024, 0x0021, 0x0000};
+const PROGMEM uint16_t NIGHTMODE[8] {0x0780, 0xfe3f, 0x361d, 0x8070, 0x7241, 0x0440, 0x0470, 0x0000};
 
-const PROGMEM uint16_t ON[] {0x0000, 0x041f, 0x8209, 0x000f, 0x41e0, 0x8200, 0x0003, 0x0000};
-const PROGMEM uint16_t OFF[] {0x8f80, 0x0420, 0x01f1, 0x1f80, 0x0024, 0x1f82, 0x0424, 0x0000};
+const PROGMEM uint16_t ON[8] {0x0000, 0x041f, 0x8209, 0x000f, 0x41e0, 0x8200, 0x0003, 0x0000};
+const PROGMEM uint16_t OFF[8] {0x8f80, 0x0420, 0x01f1, 0x1f80, 0x0024, 0x1f82, 0x0424, 0x0000};
+
+const PROGMEM uint16_t SEC[20][8] {
+    {0x0000, 0x0000, 0x0000, 0x0000, 0x28fc, 0x9324, 0xfc50, 0x0000}, /* _0 */
+    {0x0000, 0x0000, 0x0000, 0x0000, 0x0908, 0x9fe2, 0x0000, 0x0001}, /* _1 */
+    {0x0000, 0x0000, 0x0000, 0x0000, 0x1904, 0x9424, 0x1c44, 0x0001}, /* _2 */
+    {0x0000, 0x0000, 0x0000, 0x0000, 0x0882, 0x90a4, 0xe268, 0x0000}, /* _3 */
+    {0x0000, 0x0000, 0x0000, 0x0000, 0x2070, 0x8441, 0x404f, 0x0000}, /* _4 */
+    {0x0000, 0x0000, 0x0000, 0x0000, 0x889e, 0x9124, 0xe248, 0x0000}, /* _5 */
+    {0x0000, 0x0000, 0x0000, 0x0000, 0x88fc, 0x9124, 0xe448, 0x0000}, /* _6 */
+    {0x0000, 0x0000, 0x0000, 0x0000, 0x0802, 0x0c24, 0x0e4c, 0x0000}, /* _7 */
+    {0x0000, 0x0000, 0x0000, 0x0000, 0x88ec, 0x9124, 0xec48, 0x0000}, /* _8 */
+    {0x0000, 0x0000, 0x0000, 0x0000, 0x489c, 0x9224, 0xfc44, 0x0000}, /* _9 */
+    {0x8fc0, 0x3242, 0xc509, 0x000f, 0x0000, 0x0000, 0x0000, 0x0000}, /* 0_ */
+    {0x9080, 0xfe20, 0x0009, 0x0010, 0x0000, 0x0000, 0x0000, 0x0000}, /* 1_ */
+    {0x98c0, 0x2242, 0xc489, 0x0010, 0x0000, 0x0000, 0x0000, 0x0000}, /* 2_ */
+    {0x8820, 0x0a40, 0x2689, 0x000e, 0x0000, 0x0000, 0x0000, 0x0000}, /* 3_ */
+    {0x0700, 0x4412, 0x04f8, 0x0004, 0x0000, 0x0000, 0x0000, 0x0000}, /* 4_ */
+    {0x89e0, 0x1248, 0x2489, 0x000e, 0x0000, 0x0000, 0x0000, 0x0000}, /* 5_ */
+    {0x8fc0, 0x1248, 0x4489, 0x000e, 0x0000, 0x0000, 0x0000, 0x0000}, /* 6_ */
+    {0x8020, 0xc240, 0xe4c0, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000}, /* 7_ */
+    {0x8ec0, 0x1248, 0xc489, 0x000e, 0x0000, 0x0000, 0x0000, 0x0000}, /* 8_ */
+    {0x89c0, 0x2244, 0xc449, 0x000f, 0x0000, 0x0000, 0x0000, 0x0000} /* 9_ */
+};
 
 
 // Setup Clock
@@ -531,6 +554,8 @@ void prog_set(state_t& state, event_t& event) {
 
 
     if (elapsed != lastupdate) {
+        uint16_t stbuffer[8];
+
         if (elapsed % 2) {
             switch (setting) {
                 case smin5:
@@ -540,7 +565,10 @@ void prog_set(state_t& state, event_t& event) {
                     break;
                 case ssec:
                     second = Clock.getSecond();
-                    WCstate = Wordclock::SEC[second % 10] | Wordclock::SEC[second / 10 + 10];
+                    statefromflash(stbuffer, SEC[second % 10]);
+                    WCstate = WordClockState(stbuffer);
+                    statefromflash(stbuffer, SEC[second / 10 + 10]);
+                    WCstate |= WordClockState(stbuffer);
                     break;
                 // case sampm:
                 //     if (pm) {
@@ -564,7 +592,10 @@ void prog_set(state_t& state, event_t& event) {
                     break;
                 case ssec:
                     second = Clock.getSecond();
-                    WCstate = Wordclock::SEC[second % 10] | Wordclock::SEC[second / 10 + 10];
+                    statefromflash(stbuffer, SEC[second % 10]);
+                    WCstate = WordClockState(stbuffer);
+                    statefromflash(stbuffer, SEC[second / 10 + 10]);
+                    WCstate |= WordClockState(stbuffer);
                     break;
                 // case sampm:
                 //     WCstate = WordClockState({0, 0, 0, 0, 0, 0, 0, 0});
@@ -582,7 +613,7 @@ void prog_set(state_t& state, event_t& event) {
 
     if (event != EVT_NONE) {
         lastevent = millis()/1000;
-        elapsed = 0;
+        // elapsed = 0;
     }
     elapsed = millis()/1000 - lastevent;
     return;
@@ -807,11 +838,17 @@ void prog_temperature(state_t& state, event_t& event) {
             event_buffer = EVT_CLOCK;
             break;
         case EVT_NONE:
+            uint16_t stbuffer[8];
+            WordClockState WCstate;
             byte temp = Clock.getTemperature();
             wordclock.clear();
-            wordclock.update(Wordclock::SEC[temp % 10] | Wordclock::SEC[temp / 10 + 10]);
+            statefromflash(stbuffer, SEC[temp % 10]);
+            WCstate = WordClockState(stbuffer);
+            statefromflash(stbuffer, SEC[temp / 10 + 10]);
+            WCstate |= WordClockState(stbuffer);
+            wordclock.update(WCstate);
             wordclock.show();
-            sendClockState(cindex, Wordclock::SEC[temp % 10] | Wordclock::SEC[temp / 10 + 10]);
+            sendClockState(cindex, wordclock.getState());
             break;
         }
         return;
