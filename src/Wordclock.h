@@ -19,12 +19,6 @@ public:
     static const WordClockState HOURS[12];
     static const WordClockState UHR;
 
-    // static const WordClockState AM;
-    // static const WordClockState PM;
-
-    // static const WordClockState TON;
-    // static const WordClockState TOFF;
-
     static const WordClockState MSKMIN5;
     static const WordClockState MSKHOUR;
 
