@@ -11,7 +11,7 @@ private:
 
 public:
     WordClockState ();
-    WordClockState (unsigned short val[]);
+    WordClockState (const unsigned short val[]);
     WordClockState (
         unsigned short a,
         unsigned short b,

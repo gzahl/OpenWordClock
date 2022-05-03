@@ -8,7 +8,11 @@
 WordClockState::WordClockState() : value{0, 0, 0, 0, 0, 0, 0, 0} {
 };
 
-WordClockState::WordClockState (unsigned short val[]) : value{*val} {
+WordClockState::WordClockState (const unsigned short val[]) {
+    for (size_t ind = 0; ind < 8; ind++) {
+        value[ind] = val[ind];
+    }
+    return;
 };
 
 WordClockState::WordClockState (

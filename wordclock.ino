@@ -1,4 +1,4 @@
-#include <PinChangeInterrupt.h>
+      #include <PinChangeInterrupt.h>
 #include <avr/sleep.h>
 #include <DS3231.h>
 #include <Wire.h>
@@ -20,6 +20,47 @@
 
 // minimum dynamic brightness
 #define MINDYNBRIGHTNESS 5
+
+// Images to display
+const PROGMEM uint16_t INITPIC[8] {0x078f, 0x0221, 0x1805, 0xfc60, 0x0611, 0x1029, 0x7821, 0x0000};
+
+const PROGMEM uint16_t SET[8] {0x0880, 0x6429, 0xc000, 0x290f, 0x0084, 0x0040, 0x043f, 0x0000};
+const PROGMEM uint16_t BRIGHTNESS[8] {0x4200, 0x0444, 0x80e1, 0xdf4f, 0xe088, 0x5040, 0x2044, 0x0000};
+const PROGMEM uint16_t DYNAMICBRIGHTNESS[8] {0x4200, 0x0444, 0x80e1, 0xde0f, 0x8038, 0x7c40, 0x8042, 0x0001};
+const PROGMEM uint16_t TEMPERATURE[8] {0x0000, 0x0a20, 0x0200, 0x3f00, 0x0902, 0x1024, 0x0021, 0x0000};
+const PROGMEM uint16_t NIGHTMODE[8] {0x0780, 0xfe3f, 0x361d, 0x8070, 0x7241, 0x0440, 0x0470, 0x0000};
+
+const PROGMEM uint16_t ON[8] {0x0000, 0x041f, 0x8209, 0x000f, 0x41e0, 0x8200, 0x0003, 0x0000};
+const PROGMEM uint16_t OFF[8] {0x8f80, 0x0420, 0x01f1, 0x1f80, 0x0024, 0x1f82, 0x0424, 0x0000};
+
+const PROGMEM uint16_t TON[8] {0x0010, 0x3f80, 0x1800, 0x0178, 0x0380, 0x3800, 0x0001, 0x0003};
+const PROGMEM uint16_t TOFF[8] {0xc010, 0xbf81, 0x181e, 0x07c0, 0x8090, 0x3e00, 0x1009, 0x0000};
+
+const PROGMEM uint16_t AM[8] {0x1f00, 0x4412, 0x0120, 0x001f, 0x1fc, 0x0301, 0xfc10, 0x0001};
+const PROGMEM uint16_t PM[8] {0x1fc0, 0x4422, 0x8220, 0x0003, 0x1fc, 0x0301, 0xfc10, 0x0001};
+
+const PROGMEM uint16_t SEC[20][8] {
+    {0x0000, 0x0000, 0x0000, 0x0000, 0x28fc, 0x9324, 0xfc50, 0x0000}, /* _0 */
+    {0x0000, 0x0000, 0x0000, 0x0000, 0x0908, 0x9fe2, 0x0000, 0x0001}, /* _1 */
+    {0x0000, 0x0000, 0x0000, 0x0000, 0x1904, 0x9424, 0x1c44, 0x0001}, /* _2 */
+    {0x0000, 0x0000, 0x0000, 0x0000, 0x0882, 0x90a4, 0xe268, 0x0000}, /* _3 */
+    {0x0000, 0x0000, 0x0000, 0x0000, 0x2070, 0x8441, 0x404f, 0x0000}, /* _4 */
+    {0x0000, 0x0000, 0x0000, 0x0000, 0x889e, 0x9124, 0xe248, 0x0000}, /* _5 */
+    {0x0000, 0x0000, 0x0000, 0x0000, 0x88fc, 0x9124, 0xe448, 0x0000}, /* _6 */
+    {0x0000, 0x0000, 0x0000, 0x0000, 0x0802, 0x0c24, 0x0e4c, 0x0000}, /* _7 */
+    {0x0000, 0x0000, 0x0000, 0x0000, 0x88ec, 0x9124, 0xec48, 0x0000}, /* _8 */
+    {0x0000, 0x0000, 0x0000, 0x0000, 0x489c, 0x9224, 0xfc44, 0x0000}, /* _9 */
+    {0x8fc0, 0x3242, 0xc509, 0x000f, 0x0000, 0x0000, 0x0000, 0x0000}, /* 0_ */
+    {0x9080, 0xfe20, 0x0009, 0x0010, 0x0000, 0x0000, 0x0000, 0x0000}, /* 1_ */
+    {0x98c0, 0x2242, 0xc489, 0x0010, 0x0000, 0x0000, 0x0000, 0x0000}, /* 2_ */
+    {0x8820, 0x0a40, 0x2689, 0x000e, 0x0000, 0x0000, 0x0000, 0x0000}, /* 3_ */
+    {0x0700, 0x4412, 0x04f8, 0x0004, 0x0000, 0x0000, 0x0000, 0x0000}, /* 4_ */
+    {0x89e0, 0x1248, 0x2489, 0x000e, 0x0000, 0x0000, 0x0000, 0x0000}, /* 5_ */
+    {0x8fc0, 0x1248, 0x4489, 0x000e, 0x0000, 0x0000, 0x0000, 0x0000}, /* 6_ */
+    {0x8020, 0xc240, 0xe4c0, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000}, /* 7_ */
+    {0x8ec0, 0x1248, 0xc489, 0x000e, 0x0000, 0x0000, 0x0000, 0x0000}, /* 8_ */
+    {0x89c0, 0x2244, 0xc449, 0x000f, 0x0000, 0x0000, 0x0000, 0x0000} /* 9_ */
+};
 
 
 // Setup Clock
@@ -132,10 +173,14 @@ void setup() {
 
     ccode(cindex, wordclock.color);
 
+    uint16_t buffer[8];
+    statefromflash(buffer, INITPIC);
+    WordClockState initpic(buffer);
+
     wordclock.clear();
-    wordclock.update(wordclock.INITPIC);
+    wordclock.update(initpic);
     wordclock.show();
-    sendClockState(cindex, wordclock.INITPIC);
+    sendClockState(cindex, initpic);
 
     event_buffer = EVT_CLOCK;
     delay(2000);
@@ -341,6 +386,9 @@ void prog_clock(state_t& state, event_t& event) {
  void prog_menu(state_t& state, event_t& event) {
     enum menuitem_t {set, nightmode, brightness, dynbrightness, temperature, count};
     static int menuitem = set;
+
+    uint16_t stbuffer[8];
+
     switch (event) {
         case EVT_UP:
             menuitem++;
@@ -378,26 +426,24 @@ void prog_clock(state_t& state, event_t& event) {
         wordclock.clear();
         switch (menuitem) {
             case set:
-                wordclock.update(Wordclock::SET);
-                sendClockState(cindex, Wordclock::SET);
+                statefromflash(stbuffer, SET);
                 break;
             // case nightmode:
-            //     wordclock.update(Wordclock::NIGHTMODE);
-            //     sendClockState(cindex, Wordclock::NIGHTMODE);
+            //     statefromflash(stbuffer, NIGHTMODE);
             //     break;
             case brightness:
-                wordclock.update(Wordclock::BRIGHTNESS);
-                sendClockState(cindex, Wordclock::BRIGHTNESS);
+                statefromflash(stbuffer, BRIGHTNESS);
                 break;
             case dynbrightness:
-                wordclock.update(Wordclock::DYNAMICBRIGHTNESS);
-                sendClockState(cindex, Wordclock::DYNAMICBRIGHTNESS);
+                statefromflash(stbuffer, DYNAMICBRIGHTNESS);
                 break;
             case temperature:
-                wordclock.update(Wordclock::TEMPERATURE);
-                sendClockState(cindex, Wordclock::TEMPERATURE);
+                statefromflash(stbuffer, TEMPERATURE);
                 break;
         }
+        const WordClockState display(stbuffer);
+        wordclock.update(display);
+        sendClockState(cindex, wordclock.getState());
         wordclock.show();
     }
     return;
@@ -514,6 +560,8 @@ void prog_set(state_t& state, event_t& event) {
 
 
     if (elapsed != lastupdate) {
+        uint16_t stbuffer[8];
+
         if (elapsed % 2) {
             switch (setting) {
                 case smin5:
@@ -523,7 +571,10 @@ void prog_set(state_t& state, event_t& event) {
                     break;
                 case ssec:
                     second = Clock.getSecond();
-                    WCstate = Wordclock::SEC[second % 10] | Wordclock::SEC[second / 10 + 10];
+                    statefromflash(stbuffer, SEC[second % 10]);
+                    WCstate = WordClockState(stbuffer);
+                    statefromflash(stbuffer, SEC[second / 10 + 10]);
+                    WCstate |= WordClockState(stbuffer);
                     break;
                 // case sampm:
                 //     if (pm) {
@@ -547,7 +598,10 @@ void prog_set(state_t& state, event_t& event) {
                     break;
                 case ssec:
                     second = Clock.getSecond();
-                    WCstate = Wordclock::SEC[second % 10] | Wordclock::SEC[second / 10 + 10];
+                    statefromflash(stbuffer, SEC[second % 10]);
+                    WCstate = WordClockState(stbuffer);
+                    statefromflash(stbuffer, SEC[second / 10 + 10]);
+                    WCstate |= WordClockState(stbuffer);
                     break;
                 // case sampm:
                 //     WCstate = WordClockState({0, 0, 0, 0, 0, 0, 0, 0});
@@ -565,7 +619,7 @@ void prog_set(state_t& state, event_t& event) {
 
     if (event != EVT_NONE) {
         lastevent = millis()/1000;
-        elapsed = 0;
+        // elapsed = 0;
     }
     elapsed = millis()/1000 - lastevent;
     return;
@@ -781,6 +835,8 @@ void prog_brightness(state_t& state, event_t& event) {
 
 void prog_temperature(state_t& state, event_t& event) {
 
+    static byte last = millis()/2000;
+
     switch (event) {
         case EVT_DOWN:
         case EVT_SET:
@@ -790,12 +846,21 @@ void prog_temperature(state_t& state, event_t& event) {
             event_buffer = EVT_CLOCK;
             break;
         case EVT_NONE:
-            byte temp = Clock.getTemperature();
-            wordclock.clear();
-            wordclock.update(Wordclock::SEC[temp % 10] | Wordclock::SEC[temp / 10 + 10]);
-            wordclock.show();
-            sendClockState(cindex, Wordclock::SEC[temp % 10] | Wordclock::SEC[temp / 10 + 10]);
-            break;
+            if (millis()/2000 - last) {
+                last = millis()/2000;
+                uint16_t stbuffer[8];
+                WordClockState WCstate;
+                byte temp = Clock.getTemperature();
+                wordclock.clear();
+                statefromflash(stbuffer, SEC[temp % 10]);
+                WCstate = WordClockState(stbuffer);
+                statefromflash(stbuffer, SEC[temp / 10 + 10]);
+                WCstate |= WordClockState(stbuffer);
+                wordclock.update(WCstate);
+                wordclock.show();
+                sendClockState(cindex, wordclock.getState());
+                break;
+            }
         }
         return;
     }
@@ -813,12 +878,17 @@ void prog_dynbrightness(state_t& state, event_t& event) {
             break;
     }
     if (event != EVT_NONE) {
+
+        uint16_t stbuffer[8];
+
         wordclock.clear();
         if (dynbrightness) {
-            wordclock.update(Wordclock::ON);
+            statefromflash(stbuffer, ON);
         } else {
-            wordclock.update(Wordclock::OFF);
+            statefromflash(stbuffer, OFF);
         }
+        const WordClockState display(stbuffer);
+        wordclock.update(display);
         sendClockState(cindex, wordclock.getState());
         wordclock.show();
     }
@@ -910,7 +980,7 @@ void resolve_btn(event_t& evtout) {
 void sendClockState(const int& cindex, const WordClockState& state) {
     Serial.print(cindex);
     Serial.print(" ");
-    for (size_t index = 0; index < 8; index++) {
+    for (byte index = 0; index < 8; index++) {
         Serial.print(state.getWord(index), HEX);
         Serial.print(F(" "));
     }
@@ -977,4 +1047,11 @@ void setdynamicbrightness(uint8_t& brightness) {
 
     brightness = max(255*(readout-limits[0])/(limits[1] - limits[0]), MINDYNBRIGHTNESS);
     return;
+}
+
+uint16_t* statefromflash(uint16_t* output, uint16_t* fromflash) {
+    for (byte index = 0; index < 8; index++) {
+        output[index] = pgm_read_word_near(fromflash + index);
+    }
+    return output;
 }
