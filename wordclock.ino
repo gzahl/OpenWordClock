@@ -835,6 +835,8 @@ void prog_brightness(state_t& state, event_t& event) {
 
 void prog_temperature(state_t& state, event_t& event) {
 
+    static byte last = millis()/2000;
+
     switch (event) {
         case EVT_DOWN:
         case EVT_SET:
@@ -844,18 +846,21 @@ void prog_temperature(state_t& state, event_t& event) {
             event_buffer = EVT_CLOCK;
             break;
         case EVT_NONE:
-            uint16_t stbuffer[8];
-            WordClockState WCstate;
-            byte temp = Clock.getTemperature();
-            wordclock.clear();
-            statefromflash(stbuffer, SEC[temp % 10]);
-            WCstate = WordClockState(stbuffer);
-            statefromflash(stbuffer, SEC[temp / 10 + 10]);
-            WCstate |= WordClockState(stbuffer);
-            wordclock.update(WCstate);
-            wordclock.show();
-            sendClockState(cindex, wordclock.getState());
-            break;
+            if (millis()/2000 - last) {
+                last = millis()/2000;
+                uint16_t stbuffer[8];
+                WordClockState WCstate;
+                byte temp = Clock.getTemperature();
+                wordclock.clear();
+                statefromflash(stbuffer, SEC[temp % 10]);
+                WCstate = WordClockState(stbuffer);
+                statefromflash(stbuffer, SEC[temp / 10 + 10]);
+                WCstate |= WordClockState(stbuffer);
+                wordclock.update(WCstate);
+                wordclock.show();
+                sendClockState(cindex, wordclock.getState());
+                break;
+            }
         }
         return;
     }
