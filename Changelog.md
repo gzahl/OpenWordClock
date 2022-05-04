@@ -2,6 +2,11 @@
 
 [[_TOC_]]
 
+## v0.2.3
+- reintroduced nightemode (display of between set hours)
+- adapted nightmode code to work with states from flash
+- minor changes in the nightmode routine.
+
 ## v0.2.2
 This version significantly reduces SRAM usage by moving initialisation values for images from SRAM to flash. With this measure, SRAM usage was reduced from 75 % to 49 %.
 
@@ -19,9 +24,6 @@ This version significantly reduces SRAM usage by moving initialisation values fo
 | :exclamation: ATTENTION :exclamation: |
 |-----|
 |This version of code is utilising too much SRAM and is not functional! It will not generate output to the display.|
-
-
-
 
 - New states added: on, off, ton, toff
 - Nightmode added (causes excess SRAM usage)
