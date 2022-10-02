@@ -1,5 +1,9 @@
 # Wordclock
 
+Hardware: [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC_BY--NC_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
+Source code: [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+
 Wordclock. I wanted one. But they were so very expensive. So I build my own.
 
 <p align="center">
