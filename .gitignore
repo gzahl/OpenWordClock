@@ -1,2 +1,11 @@
+# CPP compile cash
 *.gch
 
+# Build directories
+build/
+
+# Virtual environments
+.venv/
+
+# Documentation subdirs temporarily excluded
+_*
