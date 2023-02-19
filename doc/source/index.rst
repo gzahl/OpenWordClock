@@ -22,6 +22,8 @@ Contents
 ========
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
 
-
+   overview
+   manual
+   hardware
+   software
