@@ -10,13 +10,13 @@ Please be aware, that this is a DIY project. The controls may vary in your imple
 
 Controls 
 --------
-
-***Work in progress.***
+Depending on the assembly of the clock, the controls are either on the left or the right side of the clock. The controls consist of a power switch and 3 simple push buttons.
 
 Power 
 ~~~~~
+The clock operates on 5 V power supplied though a standard 5.5 mm / 2.5 mm barrel jack at the bottom of the chassis. In normal operation, the clock pulls between 0.5 A and 2 A of current, depending on the selected brightness. I recomment using a power supply, that can supply at least 3 A of current at 5 V. 
 
-***Work in progress.***
+In addition, the clock has a power switch, that acts directly on the 5 V supply line. Switching the clock of with this switch removes power from all components, including the logic board. Therefore, all settings set by the user (e.g. color, color mode, brightness etc.) are lost, when turning off the clock. Only the time is kept due to a standby battery cell on the logic board for the real time clock module.
 
 Buttons
 ~~~~~~~
