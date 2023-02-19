@@ -7,18 +7,21 @@
 OpenWordClock
 =============
 
-**OpenWordClock** is a project to build my own wordclock. Feel free to derive and build your own wordclock based on this project.
+OpenWordClock is a fully open source wordclock that can be realist with hobbyist tools and capabilities.
 
+
++-------------------------------------+-------------------------------------+
+| .. image:: img/wordclock_cad_01.png | .. image:: img/wordclock_01.jpg     |
++-------------------------------------+-------------------------------------+
+
+I always fancied owning an official `Qlocktwo <https://qlocktwo.com/>`_, however found them to be rather expensive. On the other hand I was fascinated by the idea to realize one as my own project. When I then came to know about a makerspace near me with the capabilities of laser cutting and 3D-printing, I set out to realize my idea. 
+
+My aim throughout this project was to design it in such a way, that any hobbyist with a basic skill set and the will to learn new things could realize this project. The body work is laser cut or 3D-printed, the electronics are off the shelf components and the source code is build in the `Arduino <https://www.arduino.cc/>`_ environment. 
+
+Contents
+========
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
 
