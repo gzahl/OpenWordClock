@@ -41,6 +41,19 @@ I use stander WS2812B RGBW LED strips to light each letter. The body components 
 
 The logic board is based around the ATMega328P and in essence a custom Arduino Nano. For the clock, I added a DS3231 real time clock. The electronics are completed by buttons for control and a photodiode for ambient brightness measurements. 
 
+#### Source code
+The whole logic for the clock is written in Arduino flavoured C++. I use standard available libraries for the LEDs (Adafruit Neopixels) and for the real time clock (DS3231). Controls are handled via interrupts where I additionally use PinChangeInterrupts. If you build the clock yourself, you have to source your own licensed copy to these libraries. 
+
+For development, I used various different text editors, but for compilation and uploading, I use the Arduino IDE, that provides an easy to use and convinient interface. 
+
+#### Face plate
+Like with any other clock, the face plate is the most important part of a clock. While developing the project, I tried two different approaches to build by faceplate for different surface finishings. Both approaches in the way the diffusor is applied.
+
+First, for high quality single color glossy finishes or for custom prints, I use a foil stencil on a polystyrene plate. The foil is printed and cut on commercial large scale foil plotters. After removing all letters, the foil is transferred to a translucent polystyrene plate. 
+
+For metal or wood surfaces, I opted to laser cut material of the desired surface finish. As a diffusor, I use thinner polystyrene sheets glued behind the letter stencils.
+
+
 ## Contributors
 The electrical and mechanical design, C++ and python code, and features have mainly been developped by me, Jacob Nürnberg. Thanks go to various colleages for the numerous discussions on implementation details and support with 3D-printed pards, electrical components and implementation specific questions.
 
