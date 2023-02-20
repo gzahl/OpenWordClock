@@ -4,12 +4,18 @@ Source code: [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.sv
 
 
 
-OpenWordClock. I wanted one. So I build one. And you can too.
+OpenWordClock. I wanted one. So I build one. 
 
-<p align="center">
-  <img src="img/Wordclock_Model.png" width="60%">
-<figcaption><b>Fig. 1 - CAD model off the wordclock, as drawn up before build. </b></figcaption>
-</p>
+And you can too. Read how on [Read the docs.][https://openwordclock.readthedocs.io]
+
+![OpenWordClock CAD model](/doc/source/img/wordclock_cad_01.png "CAD model of OpenWordClock.")
+![OpenWordClock Build](/doc/source/img/wordclock_01.jpg "A finished OpenWordClock.")
+
+<!-- <p align="center"> -->
+<!--   <img src="img/Wordclock_Model.png" width="60%"> -->
+<!-- <figcaption><b>Fig. 1 - CAD model off the wordclock, as drawn up before build. </b></figcaption> -->
+<!-- </p> -->
+<!---->
 
 This Clock reads out the current time for you in words. This is achieved by shining LEDs through a mask with cutouts of specific letters, that form the words to display a time.
 
@@ -21,7 +27,8 @@ Well, it is a clock. So it obviously displays a time. But appart from that, I wa
 - Brightness setting
 - Temperature display
 
-In addition, I have ideas and concepts for mrore features.
+In addition, I am already working on the following upcoming features. 
+
 #### in development
 - Dynamic brighness (based on room brightness)
 - Nightmode (display off at night)
