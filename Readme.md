@@ -11,11 +11,6 @@ And you can too. Read how on [Read the docs.](https://openwordclock.readthedocs.
 ![OpenWordClock CAD model](/doc/source/img/wordclock_cad_01.png "CAD model of OpenWordClock."){: .shadow height=360}
 ![OpenWordClock Build](/doc/source/img/wordclock_01.jpg "A finished OpenWordClock."){: .shadow height=360}
 
-<!-- <p align="center"> -->
-<!--   <img src="img/Wordclock_Model.png" width="60%"> -->
-<!-- <figcaption><b>Fig. 1 - CAD model off the wordclock, as drawn up before build. </b></figcaption> -->
-<!-- </p> -->
-<!---->
 
 This Clock reads out the current time for you in words. This is achieved by shining LEDs through a mask with cutouts of specific letters, that form the words to display a time.
 
