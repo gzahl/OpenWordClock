@@ -6,10 +6,10 @@ Source code: [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.sv
 
 OpenWordClock. I wanted one. So I build one. 
 
-And you can too. Read how on [Read the docs.][https://openwordclock.readthedocs.io]
+And you can too. Read how on [Read the docs.](https://openwordclock.readthedocs.io)
 
-![OpenWordClock CAD model](/doc/source/img/wordclock_cad_01.png "CAD model of OpenWordClock.")
-![OpenWordClock Build](/doc/source/img/wordclock_01.jpg "A finished OpenWordClock.")
+![OpenWordClock CAD model](/doc/source/img/wordclock_cad_01.png "CAD model of OpenWordClock."){: .shadow height=360}
+![OpenWordClock Build](/doc/source/img/wordclock_01.jpg "A finished OpenWordClock."){: .shadow height=360}
 
 <!-- <p align="center"> -->
 <!--   <img src="img/Wordclock_Model.png" width="60%"> -->
