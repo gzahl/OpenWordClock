@@ -7,7 +7,7 @@
 OpenWordClock
 =============
 
-OpenWordClock is a fully open source wordclock that can be realist with hobbyist tools and capabilities.
+OpenWordClock is a fully open source wordclock that can be realised with hobbyist tools and capabilities.
 
 
 +-------------------------------------------+---------------------------------------+

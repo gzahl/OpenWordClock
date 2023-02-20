@@ -49,7 +49,7 @@ The baseplate holds all electronics, apart from controls, that are placed in the
    :align: center
    :alt: OpenWordClock with front panel. 
 
-   OpenWordClock with laser cut stainless steel front panel. A polystyrene diffusor evens the illumination of the letters.
+   OpenWordClock with laser cut zinc steel front panel. A polystyrene diffusor evens the illumination of the letters.
 
 I tested two different styles of front panels: laser cut stencils or foil masks on diffusor plates. Both styles yield excellent results and are suitable for different finishes. 
 
