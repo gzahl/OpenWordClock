@@ -8,8 +8,8 @@ OpenWordClock. I wanted one. So I build one.
 
 And you can too. Read how on [Read the docs.](https://openwordclock.readthedocs.io)
 
-![OpenWordClock CAD model](/doc/source/img/wordclock_cad_01.png "CAD model of OpenWordClock."){: .shadow height=360}
-![OpenWordClock Build](/doc/source/img/wordclock_01.jpg "A finished OpenWordClock."){: .shadow height=360}
+![OpenWordClock CAD model](/doc/source/img/openwordclock_cad_01.png "CAD model of OpenWordClock."){: .shadow height=360}
+![OpenWordClock Build](/doc/source/img/openwordclock_01.jpg "A finished OpenWordClock."){: .shadow height=360}
 
 
 This Clock reads out the current time for you in words. This is achieved by shining LEDs through a mask with cutouts of specific letters, that form the words to display a time.
