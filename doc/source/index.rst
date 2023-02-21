@@ -12,9 +12,15 @@ OpenWordClock is a fully open source wordclock that can be realised with hobbyis
 
 The project repository is hosted on `GitLab <https://gitlab.com/JacobNuernberg/openwordclock>`_.
 
-+-------------------------------------------+---------------------------------------+
-| .. image:: ./img/openwordclock_cad_01.png | .. image:: ./img/openwordclock_01.jpg |
-+-------------------------------------------+---------------------------------------+
+.. |cad| image:: ./img/openwordclock_cad_01.png
+   :height: 300px
+
+.. |img| image:: ./img/openwordclock_01.jpg 
+   :height: 300px 
+
++-------+-------+
+| |cad| | |img| |
++-------+-------+
 
 I always fancied owning an official `Qlocktwo <https://qlocktwo.com/>`_, however found them to be rather expensive. On the other hand I was fascinated by the idea to realize one as my own project. When I then came to know about a makerspace near me with the capabilities of laser cutting and 3D-printing, I set out to realize my idea. 
 
