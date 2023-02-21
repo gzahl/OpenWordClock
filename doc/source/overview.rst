@@ -1,3 +1,5 @@
+.. _sec-overview:
+
 Overview
 ========
 
@@ -64,6 +66,29 @@ In either case, the front panel is held on the clock with 8 magnets with matchin
 How does it work?
 -----------------
 
+Well, in essence, it's all really simple, right? RIGHT?!?
+
+Basically, you take the time and light up the correct LEDs behind the right letters to spell out the time. But wait, there is actually a fair bit of logic running in the background. 
+
+First thing needed is a clock and while the common watch is nice and handy, it's not very suitable for such project. OpenWordClock uses a `DS3231 RTC module <https://www.analog.com/en/products/ds3231.html>`_ from Analog Devices to keep track of the time. Every minute, the RTC uses an interrupt to signal to the microcontroller that another minute has passed. 
+
+The microcontroller, an `ATmega328P <https://en.wikipedia.org/wiki/ATmega328>`_ like on an Arduino, reads out the current time and translates it to a series of indices, that correspond to the LEDs behind the right letters to light up. It then sends out a digital signal to the individually addressable WS2812B RGBW LEDs. This signal also carries color information for every LED.
+
+Now in addition, to be able to set the time, the microcontroller also has to process inputs from connected buttons. Also for these user inputs, OpenWordClock uses interrupt based routines. 
+
+To combine these seemingly easy tasks, the source code employs a finite state machine. The state machine manages the interrupts and redirects the program flow to the right state to finally display the desired result. And using an interrupt based scheme allows for another advantage: Instead of constantly having to pull for updates, like a new time or a button press (keyword: busy waiting), the microcontroller simply has to wait for the next interrupt. This also allows OpenWordClock to put the microcontroller to sleep whenever no action is needed.
+
+In general, the whole control logic can be put together with off-the-shelf components on a breadboard. A simple `Arduino Nano <https://store.arduino.cc/products/arduino-nano>`_ paired with a `DS3231 eval board <https://www.adafruit.com/product/3013>`_ connected to a few buttons and some LEDs and the electronics are up and running. In fact, this is how my first OpenWordClock was set up. For cleanliness and the sake of learning about PCB design, I created a fully integrated control board, essentially a custom Arduino Nano with a DS3231. This control board resolves a whole rats nest of wires and is neatly mounted inside the word clock.
 
 Where to start?
 ---------------
+
+Now, that you know the basic principles of OpenWordClock, it is up to you where to continue. 
+
+Did this introduction catch your interest and you want to build a OpenWordClock yourself? Keep reading about the :ref:`hardware and the assembly <sec-hardware>`. Find out, where you can source the components, where you can laser cut and 3D-print, and if you have the tools and the time. Still interested? Then go ahead, what's stopping you. 
+
+Are you interested in the Software that OpenWordClock employs or want to upload and test it yourself? Then read through the :ref:`source code documentation <sec-software>`. 
+
+Or are you already done with your build and need to know how to operate the clock? There is also an :ref:`operating manual <sec-manual>` for OpenWordClock.
+
+In any case, I suggest you check out the `project repository hosted on GitLab <https://gitlab.com/JacobNuernberg/openwordclock>`_ where all resources are hosted. Feel free to leave remarks and report issues. 

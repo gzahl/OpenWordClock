@@ -1,3 +1,5 @@
+.. _sec-manual:
+
 Operating manual
 ================
 

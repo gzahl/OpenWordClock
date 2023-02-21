@@ -3,12 +3,14 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+.. _sec-openwordclock:
 
 OpenWordClock
 =============
 
 OpenWordClock is a fully open source wordclock that can be realised with hobbyist tools and capabilities.
 
+The project repository is hosted on `GitLab <https://gitlab.com/JacobNuernberg/openwordclock>`_.
 
 +-------------------------------------------+---------------------------------------+
 | .. image:: ./img/openwordclock_cad_01.png | .. image:: ./img/openwordclock_01.jpg |
