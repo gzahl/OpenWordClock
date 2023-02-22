@@ -1,7 +1,7 @@
 # OpenWordClock
 [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC_BY--NC_4.0-blue.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-![Documentation](https://img.shields.io/readthedocs/openwordclock)
+[![Documentation](https://img.shields.io/readthedocs/openwordclock)](https://openwordclock.readthedocs.io)
 
 
 OpenWordClock. I wanted one. So I build one. 
