@@ -64,12 +64,10 @@ The electrical and mechanical design, C++ and python code, and features have mai
 
 I have put quite some effort into this project and would like everyone to be able to build their own wordlock. Nonetheless, this remains a DIY project and at this point, I do not plan to commercialize any of it. If you are not willing to put the efforts and time into building your own personal wordclock, then it is only right to support the original Qlocktwo and support their buisiness by purchasing one of them. 
 
-Therefore the licensing on this project is restricting use for non-commercial purposes for the hardware components. 
+Therefore the licensing on the hardware components in this project is restricting use for non-commercial purposes. These components are published under the CreativeCommons Attribution Non-Commercial 4.0 license.
+[![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC_BY--NC_4.0-blue.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
 
-Hardware: [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC_BY--NC_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
-
-For software on the other hand, I am all in favour of FOSS. The code of this project does not do magic but rather utilises and combines existing tools. So, go ahead and use and adapt it.
-
-Source code: [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+For software on the other hand, I am all in favour of FOSS. The code of this project does not do magic but rather utilises and combines existing tools. So, go ahead and use and adapt it under the terms and conditions of the MIT license.
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 
