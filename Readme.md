@@ -1,7 +1,7 @@
 # OpenWordClock
-Hardware: [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC_BY--NC_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
-Source code: [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
+[![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC_BY--NC_4.0-blue.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+![Documentation](https://img.shields.io/readthedocs/openwordclock)
 
 
 OpenWordClock. I wanted one. So I build one. 
@@ -39,7 +39,7 @@ From a technical standpoint, this project can be divided roughly in four parts: 
 The body is a grid of slotted MDF parts completed by a suiting backplane and an outer frame. All is held in place by 3D-printed custom fixtures and a bit of glue here and there. All body components are laser cut from a single 600 mm x 900 mm sheet of 3 mm MDF. The templates for laser cutting are located in the cad directory. 
 
 #### Electronics
-I use stander WS2812B RGBW LED strips to light each letter. The body components are designed to match the pitch of an LED strip with 30 LEDs per meter. The strips are directly glued to the baseplate. 
+I use standard WS2812B RGBW LED strips to light each letter. The body components are designed to match the pitch of an LED strip with 30 LEDs per meter. The strips are directly glued to the baseplate. 
 
 The logic board is based around the ATMega328P and in essence a custom Arduino Nano. For the clock, I added a DS3231 real time clock. The electronics are completed by buttons for control and a photodiode for ambient brightness measurements. 
 
