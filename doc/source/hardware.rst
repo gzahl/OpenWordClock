@@ -1,7 +1,7 @@
 .. _sec-hardware:
 
-Hardware
-========
+Hardware and assembly
+=====================
 
 Here you find all information about the hardware, where to source the individual components and how to assemble your very own OpenWordClock.
 
