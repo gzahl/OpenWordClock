@@ -133,6 +133,7 @@ The control board of the OpenWordClock can be realized in two ways: Either you t
 .. list-table:: Custom control pcb comonents
    :widths: auto 
    :header-rows: 1
+   :align: center
 
    * - Qty.
      - Description
@@ -254,6 +255,7 @@ Independent of how you realize the control board, the following electronic compo
 .. list-table:: Other electronic components
    :widths: auto 
    :header-rows: 1
+   :align: center
 
    * - Qty. 
      - Description
