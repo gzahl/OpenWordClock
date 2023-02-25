@@ -6,6 +6,43 @@ Parts List
 .. warning::
    The following parts lists may contain errors and are published without any warranty. Please carefully review before ordering components.
 
+Tools
+~~~~~
+
+Before digging into the parts list, let's have a look at the tools needed to assemble the wordclock. Generally, these can be categorized in three categories: *definitely needed*, *access required*, and *nice to have*.
+
+:Definitely needed:
+  These tools are used at various points during the assembly of OpenWordClock. Make sure to have them at hand before starting the project.
+
+  - Soldering iron
+  - Screwdriver
+
+|
+
+:Access required:
+  These tools are needed to create the components of the body. Nonetheless, if it is not feasible to own them, you should still get access to these tools, i.e. in your local maker space or fablab.
+
+  - 3D printer
+  - Laser cutter
+  - Foil plotter
+
+|
+  
+:Nice to have:
+  Albeit not strictly needed, the following tools come in handy throughout the assembly. 
+
+  - Hot air SMD soldering iron
+  - Crimping pliers and supplies
+  - Tweezers
+
+|
+
+The final list contains consumables, that come in handy from time to time throughout the project.
+
+:Consumables:
+  - Wood glue
+  - universal purpose glue or superglue
+  - solvents for cleaning (i.e. isopropanol)
 
 Body parts and fasteners
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -69,6 +106,9 @@ The corner blocks are 3D printed in PLA with 5-15 % infill and can be printed wi
      - approx. 2 m
 
 The body is held in place by a bunch of fasteners listed in the table below. The table also lists fasteners needed to attach the control board and the front panel. These should also be available in your local hardware store. 
+
+.. note::
+   The table lists screws explicitely as torx screws. However, any other suitable screw head fits the purpose as well.
 
 .. list-table:: Fasteners
    :widths: auto
@@ -311,3 +351,4 @@ Independent of how you realize the control board, the following electronic compo
      - 
 
 Here, the red and black cable cary power to the LEDs, the thinner blue carries the signal. Various color signal wire is used to connect buttons and the photodiode. The WAGO clamps help to connect the LEDs.  
+
