@@ -9,6 +9,14 @@ The first section goes over all parts, that are needed to build an OpenWordClock
 
 The following sections discuss the assembly of the OpenWordClock, starting with the body, followed by logic board and electronics with the last section being the front panel of the clock. This corresponds to the logical order of assembly. However, it is absolutely possible to work on multiple parts simultaneously, i.e. when waiting for other components to arrive. 
 
+.. figure:: ./img/openwordclock_body_00.jpg
+   :figwidth: 70%
+   :align: center
+   :alt: Overview of all OpenWordClock parts.
+
+   Overview of all OpenWordClock parts.
+
+
 .. toctree::
    :maxdepth: 2
    :caption: Outline 
