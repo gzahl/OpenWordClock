@@ -54,8 +54,8 @@ The first approach consists in applying a foil stencil to a milky screen as fron
 
 - Finally, remove the transfer foil. To see how to attach the magnets, keep reading at the bottom of this page. 
 
-Laser cut diffusor
-~~~~~~~~~~~~~~~~~~
+Laser cut front panel
+~~~~~~~~~~~~~~~~~~~~~
 
 This second approach of a front panel is very suitable for front panels of wood, metal or other materials with a particular surface finish. The images below show a front panel from 3 mm teak plywood.
 

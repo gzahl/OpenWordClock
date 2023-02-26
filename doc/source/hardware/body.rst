@@ -47,6 +47,8 @@ The following step-by-step instructions will guide you through the assembly of a
 
    - The heat set inserts are easily installed with the tip of a soldering iron. Reduce the temperature to avoid burning or scorching the 3D print. 
 
+   - Install one magnet in each of the counter sunk holes on the top of the corner blocks with universal or super glue.
+
    .. list-table::
 
      * - .. figure:: ../img/openwordclock_body_02.jpg
