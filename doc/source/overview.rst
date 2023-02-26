@@ -34,7 +34,7 @@ Construction
 ------------
 
 .. figure:: ./img/openwordclock_02.jpg
-   :width: 70 %
+   :figwidth: 70 %
    :align: center
    :alt: Image of the construction of OpenWordClock
 
@@ -47,7 +47,7 @@ The outer measurement with 450 mm x 450 mm match the measurements of the origina
 The baseplate holds all electronics, apart from controls, that are placed in the outer frame. The 3 control buttons and the power switch can be either placed on the left or on the right. Similarly, the logic board can be mounted on the left or on the right. The 5.5 mm / 2.5 mm barrel jack for power is always on the bottom. A photodiode for room brightness detection is placed in the top. 
 
 .. figure:: ./img/openwordclock_01.jpg
-   :width: 70 %
+   :figwidth: 70 %
    :align: center
    :alt: OpenWordClock with front panel. 
 
