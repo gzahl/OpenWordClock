@@ -90,6 +90,14 @@ Attaching magnets for mounting
 
 As a final step, it is time to install the mounting magnets on the front panel. There is a rather simple but powerful trick to achieve a good result.
 
+.. figure:: ../img/openwordclock_frontpanel_04.jpg
+  :figwidth: 60%
+  :align: center
+  :alt: OpenWordClock front panel magnet installation with plastic wrap around the corners.
+
+  OpenWordClock front panel magnet installation with plastic wrap around the corners. Glue not yet applied.
+
+
 - Take out the readily assembled body of your OpenwordClock and apply a strip of plastic wrap across the corner blocks with the countersunk magnets. 
 
 - Take the magnets for the front panel and place them on the magnets in the corner blocks. The align perfectly on their own
