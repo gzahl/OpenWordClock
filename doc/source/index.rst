@@ -3,6 +3,12 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+.. meta::
+   :description: OpenWordClock is a fully open source DIY arduino based word clock for hobbyists. It is designed to be realisable with access to a local makerspace and simple tools. 
+   :keywords: wordclock, arduino, diy, opensource, makerspace, fablab
+   :keywords lang=en: project, do it yourself
+   :keywords lang=de: wortuhr, projekt, selber bauen
+
 .. _sec-openwordclock:
 
 OpenWordClock
