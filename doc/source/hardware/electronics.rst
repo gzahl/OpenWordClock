@@ -139,9 +139,10 @@ Installing controls and logic board
        - .. figure:: ../img/openwordclock_electronics_03.jpg
            :figwidth: 300
            :align: center
-           :alt: Wired up LEDs with +5 V (red), GND (black), and data (blue). 
+           :alt: A closer look at the logic board with connections for buttons and photodiode at the top and GND, DOUT, and +5 V at the bottom. 
 
-           Wired up LEDs with +5 V (red), GND (black), and data (blue). 
+           A closer look at the logic board with connections for buttons and photodiode at the top and GND, DOUT, and +5 V at the bottom. 
+
 
 
 
